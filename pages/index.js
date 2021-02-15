@@ -2,7 +2,19 @@ import Head from "next/head";
 import supabase from "../util/supabase";
 import { useTable, useSortBy } from "react-table";
 import Container from "../components/common/container";
-import { Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  Box,
+  Grid,
+  GridItem,
+  Heading,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { useMemo } from "react";
 
 const Home = ({ allegations }) => {
@@ -43,8 +55,6 @@ const Home = ({ allegations }) => {
 
   const data = useMemo(() => formattedData, formattedData);
 
-  console.log(allegations);
-
   return (
     <div>
       <Head>
@@ -52,9 +62,38 @@ const Home = ({ allegations }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container>
-        <div>
+        <Box>
+          <Grid templateColumns="repeat(12, 1fr)">
+            <GridItem colSpan="8">
+              <Box pt="32" pb="24">
+                <Text
+                  fontWeight="semibold"
+                  fontSize="2xl"
+                  textTransform="uppercase"
+                  color="gray.400"
+                  letterSpacing="0.125rem"
+                  lineHeight="0.5rem"
+                >
+                  Overview
+                </Text>
+                <Heading
+                  as="h1"
+                  fontSize="8xl"
+                  fontWeight="800"
+                  letterSpacing="-0.1rem"
+                  mb="8"
+                >
+                  Buffalo Watchdog
+                </Heading>
+                <Text color="gray.700" fontSize="2xl">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </Text>
+              </Box>
+            </GridItem>
+          </Grid>
           <DataTable columns={columns} data={data} />
-        </div>
+        </Box>
       </Container>
     </div>
   );
