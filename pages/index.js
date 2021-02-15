@@ -63,7 +63,7 @@ const Home = ({ allegations }) => {
       </Head>
       <Container>
         <Box>
-          <Grid templateColumns="repeat(12, 1fr)">
+          <Grid templateColumns="repeat(12, 1fr)" gap="6">
             <GridItem colSpan="8">
               <Box pt="32" pb="24">
                 <Text
@@ -81,7 +81,7 @@ const Home = ({ allegations }) => {
                   fontSize="8xl"
                   fontWeight="800"
                   letterSpacing="-0.1rem"
-                  mb="8"
+                  mb="4"
                 >
                   Buffalo Watchdog
                 </Heading>
