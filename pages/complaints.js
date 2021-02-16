@@ -17,48 +17,34 @@ import {
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 
-const Home = ({ allegations }) => {
+const Complaints = ({ complaints }) => {
   const columns = useMemo(() => [
     {
       Header: "ID",
       accessor: "id",
     },
     {
-      Header: "First Name",
-      accessor: "first_name",
-    },
-    {
-      Header: "Last Name",
-      accessor: "last_name",
-    },
-    {
-      Header: "Rank",
-      accessor: "rank",
-    },
-    {
-      Header: "Unit",
-      accessor: "unit",
-    },
-    {
-      Header: "Allegations",
-      accessor: "allegations_count",
-      Cell: ({ cell: { value } }) => <Text fontWeight="bold">{value}</Text>,
+      Header: "Name",
+      accessor: "name",
     },
   ]);
 
-  const formattedData = allegations.map((a) => {
-    return {
-      ...a,
-      allegations_count: a.allegations.length,
-    };
-  });
+  // const formattedData = complaints.map((d) => {
+  //   return {
+  //     ...d,
+  //     // allegations_count: a.allegations.length,
+  //   };
+  // });
 
-  const data = useMemo(() => formattedData, formattedData);
+  const data = useMemo(
+    () => complaints.sort((a, b) => a.id - b.id),
+    complaints
+  );
 
   return (
-    <div>
+    <>
       <Head>
-        <title>Create Next App</title>
+        <title>Complaints</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container>
@@ -83,7 +69,7 @@ const Home = ({ allegations }) => {
                   letterSpacing="-0.1rem"
                   mb="4"
                 >
-                  Buffalo Watchdog
+                  Complaints
                 </Heading>
                 <Text color="gray.700" fontSize="2xl">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -95,7 +81,7 @@ const Home = ({ allegations }) => {
           <DataTable columns={columns} data={data} />
         </Box>
       </Container>
-    </div>
+    </>
   );
 };
 
@@ -150,10 +136,8 @@ const DataTable = ({ columns, data }) => {
   );
 };
 
-export async function getStaticProps() {
-  const { data, error } = await supabase
-    .from("officers")
-    .select("*, allegations(*)");
+export async function getStaticProps(context) {
+  const { data, error } = await supabase.from("complaint_types").select("*");
 
   if (error) {
     return {
@@ -163,9 +147,9 @@ export async function getStaticProps() {
 
   return {
     props: {
-      allegations: data,
+      complaints: data,
     },
   };
 }
 
-export default Home;
+export default Complaints;
