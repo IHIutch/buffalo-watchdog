@@ -3,6 +3,7 @@ import supabase from "../util/supabase";
 import { useTable, useSortBy } from "react-table";
 import Container from "../components/common/container";
 import {
+  AlertDialogOverlay,
   Box,
   Grid,
   GridItem,
@@ -16,45 +17,39 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useMemo } from "react";
+import dayjs from "dayjs";
 
 const Home = ({ allegations }) => {
   const columns = useMemo(() => [
     {
-      Header: "First Name",
-      accessor: "first_name",
+      Header: "Open Date",
+      accessor: "open_date",
+      Cell: ({ cell: { value } }) =>
+        value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
-      Header: "Last Name",
-      accessor: "last_name",
+      Header: "Disposition Date",
+      accessor: "disposition_date",
+      Cell: ({ cell: { value } }) =>
+        value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
-      Header: "Rank",
-      accessor: "rank",
+      Header: "Officer",
+      accessor: "officers",
+      Cell: ({ cell: { value } }) => `${value.first_name} ${value.last_name}`,
     },
     {
-      Header: "Unit",
-      accessor: "unit",
-    },
-    {
-      Header: "Allegations",
-      accessor: "allegations_count",
-      Cell: ({ cell: { value } }) => <Text fontWeight="bold">{value}</Text>,
+      Header: "Complaint",
+      accessor: "complaint_id",
     },
   ]);
 
-  const formattedData = allegations.map((a) => {
-    return {
-      ...a,
-      allegations_count: a.allegations.length,
-    };
-  });
-
-  const data = useMemo(() => formattedData, formattedData);
+  const data = useMemo(() => allegations, allegations);
 
   return (
     <div>
       <Head>
-        <title>Buffalo Watchdog</title>
+        <title>Allegations</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container>
@@ -79,7 +74,7 @@ const Home = ({ allegations }) => {
                   letterSpacing="-0.1rem"
                   mb="4"
                 >
-                  Buffalo Watchdog
+                  Allegations
                 </Heading>
                 <Text color="gray.700" fontSize="2xl">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -109,8 +104,8 @@ const DataTable = ({ columns, data }) => {
       initialState: {
         sortBy: [
           {
-            id: "allegations_count",
-            desc: true,
+            id: "open_date",
+            desc: false,
           },
         ],
       },
@@ -156,8 +151,8 @@ const DataTable = ({ columns, data }) => {
 
 export async function getStaticProps() {
   const { data, error } = await supabase
-    .from("officers")
-    .select("*, allegations(*)");
+    .from("allegations")
+    .select("*, officers(*)");
 
   if (error) {
     return {
