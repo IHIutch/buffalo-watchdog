@@ -3,7 +3,6 @@ import supabase from "../util/supabase";
 import { useTable, useSortBy } from "react-table";
 import Container from "../components/common/container";
 import {
-  AlertDialogOverlay,
   Box,
   Grid,
   GridItem,
@@ -19,7 +18,7 @@ import {
 import { useMemo } from "react";
 import dayjs from "dayjs";
 
-const Home = ({ allegations }) => {
+const Allegations = ({ allegations }) => {
   const columns = useMemo(() => [
     {
       Header: "Open Date",
@@ -167,4 +166,4 @@ export async function getStaticProps() {
   };
 }
 
-export default Home;
+export default Allegations;
