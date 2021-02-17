@@ -38,8 +38,11 @@ const Allegations = ({ allegations }) => {
       Cell: ({ cell: { value } }) => `${value.first_name} ${value.last_name}`,
     },
     {
-      Header: "Complaint",
-      accessor: "complaint_id",
+      Header: "Complaints",
+      accessor: "complaints",
+      Cell: ({ cell: { value } }) => (
+        <>{value && value.map((v) => <span>{v.complaint_types.name},</span>)}</>
+      ),
     },
   ]);
 
@@ -149,9 +152,9 @@ const DataTable = ({ columns, data }) => {
 };
 
 export async function getStaticProps() {
-  const { data, error } = await supabase
-    .from("allegations")
-    .select("*, officers(*)");
+  const { data, error } = await supabase.from("allegations").select(`*, 
+      officers(*),
+      complaints: allegation_to_complaint(*, complaint_types(*))`);
 
   if (error) {
     return {
