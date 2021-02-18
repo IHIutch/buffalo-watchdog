@@ -1,7 +1,7 @@
 import Head from "next/head";
-import supabase from "../util/supabase";
+import supabase from "@/util/supabase";
 import { useTable, useSortBy } from "react-table";
-import Container from "../components/common/container";
+import Container from "@/components/common/container";
 import NextLink from "next/link";
 import {
   Box,
@@ -22,51 +22,52 @@ import {
 import { useMemo } from "react";
 import dayjs from "dayjs";
 
-const Allegations = ({ allegations }) => {
+const ComplaintType = ({ complaint }) => {
+  console.log(complaint);
   const columns = useMemo(() => [
     {
       Header: "Open Date",
-      accessor: "open_date",
+      accessor: "allegation.open_date",
       Cell: ({ cell: { value } }) =>
-        value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
-    },
-    {
-      Header: "Disposition Date",
-      accessor: "disposition_date",
-      Cell: ({ cell: { value } }) =>
-        value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
+        dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
       Header: "Officer",
-      accessor: "officers",
+      accessor: "allegation.officer",
       Cell: ({ cell: { value } }) => `${value.first_name} ${value.last_name}`,
     },
     {
-      Header: "Complaints",
-      accessor: "complaints",
+      Header: "Disposition Date",
+      accessor: "allegation.disposition_date",
+      Cell: ({ cell: { value } }) =>
+        dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
+    },
+    {
+      Header: "Dispositions",
+      accessor: "allegation.dispositions",
       Cell: ({ cell: { value } }) => (
         <HStack>
           {value &&
             value.map((v, idx) => (
               <NextLink
                 key={idx}
-                href={`/complaints/${v.complaint_type.slug}`}
+                href={`/dispositions/${v.disposition_type.slug}`}
                 passHref
               >
-                <Tag as={Link}>{v.complaint_type.name}</Tag>
+                <Tag as={Link}>{v.disposition_type.name}</Tag>
               </NextLink>
             ))}
         </HStack>
       ),
     },
   ]);
-
-  const data = useMemo(() => allegations, allegations);
+  const complaints = complaint.complaints;
+  const data = useMemo(() => complaints, complaints);
 
   return (
     <div>
       <Head>
-        <title>Allegations</title>
+        <title>{complaint.name}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Container>
@@ -82,7 +83,7 @@ const Allegations = ({ allegations }) => {
                   letterSpacing="0.125rem"
                   lineHeight="0.5rem"
                 >
-                  Overview
+                  Complaint
                 </Text>
                 <Heading
                   as="h1"
@@ -91,7 +92,7 @@ const Allegations = ({ allegations }) => {
                   letterSpacing="-0.1rem"
                   mb="4"
                 >
-                  Allegations
+                  {complaint.name}
                 </Heading>
                 <Text color="gray.700" fontSize="2xl">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -166,10 +167,30 @@ const DataTable = ({ columns, data }) => {
   );
 };
 
-export async function getStaticProps() {
-  const { data, error } = await supabase.from("allegations").select(`*, 
-      officers(*),
-      complaints: allegation_to_complaint(*, complaint_type: complaint_types(*))`);
+export async function getStaticPaths() {
+  const { data } = await supabase.from("complaint_types").select("*");
+
+  const paths = data.map((c) => ({
+    params: { slug: c.slug },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  const { data, error } = await supabase
+    .from("complaint_types")
+    .select(
+      `*, 
+      complaints: allegation_to_complaint(*, allegation: allegations(*, officer: officers(*), dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*))))
+      `
+    )
+    .eq("slug", params.slug);
+
+  // data.forEach((d) => {
+  //   console.log(d.complaints);
+  // });
+  // console.log(data);
 
   if (error) {
     return {
@@ -179,9 +200,9 @@ export async function getStaticProps() {
 
   return {
     props: {
-      allegations: data,
+      complaint: data[0],
     },
   };
 }
 
-export default Allegations;
+export default ComplaintType;
