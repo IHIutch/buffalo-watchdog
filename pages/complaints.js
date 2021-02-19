@@ -7,7 +7,9 @@ import {
   Grid,
   GridItem,
   Heading,
+  Link,
   Table,
+  Tag,
   Tbody,
   Td,
   Text,
@@ -16,6 +18,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { useMemo } from "react";
+import NextLink from "next/link";
 
 const Complaints = ({ complaints }) => {
   const columns = useMemo(() => [
@@ -25,16 +28,17 @@ const Complaints = ({ complaints }) => {
     },
     {
       Header: "Name",
-      accessor: "name",
+      accessor: (originalRow) => ({
+        name: originalRow.name,
+        slug: originalRow.slug,
+      }),
+      Cell: ({ value }) => (
+        <NextLink href={`/complaints/${value.slug}`} passHref>
+          <Tag as={Link}>{value.name}</Tag>
+        </NextLink>
+      ),
     },
   ]);
-
-  // const formattedData = complaints.map((d) => {
-  //   return {
-  //     ...d,
-  //     // allegations_count: a.allegations.length,
-  //   };
-  // });
 
   const data = useMemo(
     () => complaints.sort((a, b) => a.id - b.id),

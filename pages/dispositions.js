@@ -40,13 +40,6 @@ const Dispositions = ({ dispositions }) => {
     },
   ]);
 
-  // const formattedData = dispositions.map((d) => {
-  //   return {
-  //     ...d,
-  //     // allegations_count: a.allegations.length,
-  //   };
-  // });
-
   const data = useMemo(
     () => dispositions.sort((a, b) => a.id - b.id),
     dispositions
