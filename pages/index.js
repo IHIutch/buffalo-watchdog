@@ -38,7 +38,7 @@ const Home = ({ allegations }) => {
     {
       Header: "Allegations",
       accessor: "allegations_count",
-      Cell: ({ cell: { value } }) => <Text fontWeight="bold">{value}</Text>,
+      Cell: ({ value }) => <Text fontWeight="bold">{value}</Text>,
     },
   ]);
 

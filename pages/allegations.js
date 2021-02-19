@@ -27,24 +27,24 @@ const Allegations = ({ allegations }) => {
     {
       Header: "Open Date",
       accessor: "open_date",
-      Cell: ({ cell: { value } }) =>
+      Cell: ({ value }) =>
         value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
       Header: "Disposition Date",
       accessor: "disposition_date",
-      Cell: ({ cell: { value } }) =>
+      Cell: ({ value }) =>
         value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
       Header: "Officer",
       accessor: "officers",
-      Cell: ({ cell: { value } }) => `${value.first_name} ${value.last_name}`,
+      Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
     },
     {
       Header: "Complaints",
       accessor: "complaints",
-      Cell: ({ cell: { value } }) => (
+      Cell: ({ value }) => (
         <HStack>
           {value &&
             value.map((v, idx) => (

@@ -27,18 +27,18 @@ const DispositionType = ({ disposition }) => {
     {
       Header: "Open Date",
       accessor: "allegation.open_date",
-      Cell: ({ cell: { value } }) =>
+      Cell: ({ value }) =>
         dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
       Header: "Officer",
       accessor: "allegation.officer",
-      Cell: ({ cell: { value } }) => `${value.first_name} ${value.last_name}`,
+      Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
     },
     {
       Header: "Disposition Date",
       accessor: "allegation.disposition_date",
-      Cell: ({ cell: { value } }) =>
+      Cell: ({ value }) =>
         dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {

@@ -23,29 +23,28 @@ import { useMemo } from "react";
 import dayjs from "dayjs";
 
 const ComplaintType = ({ complaint }) => {
-  console.log(complaint);
   const columns = useMemo(() => [
     {
       Header: "Open Date",
       accessor: "allegation.open_date",
-      Cell: ({ cell: { value } }) =>
+      Cell: ({ value }) =>
         dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
       Header: "Officer",
       accessor: "allegation.officer",
-      Cell: ({ cell: { value } }) => `${value.first_name} ${value.last_name}`,
+      Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
     },
     {
       Header: "Disposition Date",
       accessor: "allegation.disposition_date",
-      Cell: ({ cell: { value } }) =>
+      Cell: ({ value }) =>
         dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
     },
     {
       Header: "Dispositions",
       accessor: "allegation.dispositions",
-      Cell: ({ cell: { value } }) => (
+      Cell: ({ value }) => (
         <HStack>
           {value &&
             value.map((v, idx) => (
@@ -186,11 +185,6 @@ export async function getStaticProps({ params }) {
       `
     )
     .eq("slug", params.slug);
-
-  // data.forEach((d) => {
-  //   console.log(d.complaints);
-  // });
-  // console.log(data);
 
   if (error) {
     return {
