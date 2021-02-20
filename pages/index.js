@@ -79,7 +79,7 @@ const Home = ({ allegations }) => {
                   textTransform="uppercase"
                   color="gray.400"
                   letterSpacing="0.125rem"
-                  lineHeight="0.5rem"
+                  lineHeight="0.5"
                 >
                   Overview
                 </Text>
@@ -89,6 +89,7 @@ const Home = ({ allegations }) => {
                   fontWeight="800"
                   letterSpacing="-0.1rem"
                   mb="4"
+                  lineHeight="1"
                 >
                   Buffalo Watchdog
                 </Heading>

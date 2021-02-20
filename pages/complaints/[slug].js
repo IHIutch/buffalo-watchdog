@@ -83,7 +83,7 @@ const ComplaintType = ({ complaint }) => {
                   textTransform="uppercase"
                   color="gray.400"
                   letterSpacing="0.125rem"
-                  lineHeight="0.5rem"
+                  lineHeight="0.5"
                 >
                   Complaint
                 </Text>
@@ -93,6 +93,7 @@ const ComplaintType = ({ complaint }) => {
                   fontWeight="800"
                   letterSpacing="-0.1rem"
                   mb="4"
+                  lineHeight="1"
                 >
                   {complaint.name}
                 </Heading>
