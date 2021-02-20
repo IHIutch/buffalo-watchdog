@@ -113,6 +113,7 @@ const Allegations = ({ allegations }) => {
                   color="gray.400"
                   letterSpacing="0.125rem"
                   lineHeight="0.5"
+                  mb="4"
                 >
                   Overview
                 </Text>
