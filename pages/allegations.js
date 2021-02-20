@@ -8,7 +8,6 @@ import {
   Grid,
   GridItem,
   Heading,
-  HStack,
   Link,
   Table,
   Tag,
@@ -18,6 +17,8 @@ import {
   Th,
   Thead,
   Tr,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 import dayjs from "dayjs";
@@ -25,38 +26,69 @@ import dayjs from "dayjs";
 const Allegations = ({ allegations }) => {
   const columns = useMemo(() => [
     {
-      Header: "Open Date",
-      accessor: "open_date",
-      Cell: ({ value }) =>
-        value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
-    },
-    {
-      Header: "Disposition Date",
-      accessor: "disposition_date",
-      Cell: ({ value }) =>
-        value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
-    },
-    {
       Header: "Officer",
       accessor: "officers",
-      Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
+      Cell: ({ value }) => (
+        <Box
+          as="span"
+          whiteSpace="nowrap"
+        >{`${value.first_name} ${value.last_name}`}</Box>
+      ),
+    },
+    {
+      Header: "Open Date",
+      accessor: "open_date",
+      Cell: ({ value }) => (
+        <Box as="span" whiteSpace="nowrap">
+          {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
+        </Box>
+      ),
     },
     {
       Header: "Complaints",
       accessor: "complaints",
       Cell: ({ value }) => (
-        <HStack>
+        <Wrap>
           {value &&
             value.map((v, idx) => (
-              <NextLink
-                key={idx}
-                href={`/complaints/${v.complaint_type.slug}`}
-                passHref
-              >
-                <Tag as={Link}>{v.complaint_type.name}</Tag>
-              </NextLink>
+              <WrapItem key={idx}>
+                <NextLink
+                  href={`/complaints/${v.complaint_type.slug}`}
+                  passHref
+                >
+                  <Tag as={Link}>{v.complaint_type.name}</Tag>
+                </NextLink>
+              </WrapItem>
             ))}
-        </HStack>
+        </Wrap>
+      ),
+    },
+    {
+      Header: "Disposition Date",
+      accessor: "disposition_date",
+      Cell: ({ value }) => (
+        <Box as="span" whiteSpace="nowrap">
+          {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
+        </Box>
+      ),
+    },
+    {
+      Header: "Dispositions",
+      accessor: "dispositions",
+      Cell: ({ value }) => (
+        <Wrap spacing="2">
+          {value &&
+            value.map((v, idx) => (
+              <WrapItem key={idx}>
+                <NextLink
+                  href={`/dispositions/${v.disposition_type.slug}`}
+                  passHref
+                >
+                  <Tag as={Link}>{v.disposition_type.name}</Tag>
+                </NextLink>
+              </WrapItem>
+            ))}
+        </Wrap>
       ),
     },
   ]);
@@ -137,6 +169,7 @@ const DataTable = ({ columns, data }) => {
             {headerGroup.headers.map((column, cIdx) => (
               <Th
                 key={cIdx}
+                whiteSpace="nowrap"
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >
                 {column.render("Header")}
@@ -169,7 +202,8 @@ const DataTable = ({ columns, data }) => {
 export async function getStaticProps() {
   const { data, error } = await supabase.from("allegations").select(`*, 
       officers(*),
-      complaints: allegation_to_complaint(*, complaint_type: complaint_types(*))`);
+      complaints: allegation_to_complaint(*, complaint_type: complaint_types(*)),
+      dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*))`);
 
   if (error) {
     return {
