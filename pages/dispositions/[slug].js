@@ -8,7 +8,6 @@ import {
   Grid,
   GridItem,
   Heading,
-  HStack,
   Link,
   Table,
   Tag,
@@ -18,6 +17,8 @@ import {
   Th,
   Thead,
   Tr,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 import dayjs from "dayjs";
@@ -45,18 +46,19 @@ const DispositionType = ({ disposition }) => {
       Header: "Complaint",
       accessor: "allegation.complaints",
       Cell: ({ value }) => (
-        <HStack>
+        <Wrap>
           {value &&
             value.map((v, idx) => (
-              <NextLink
-                key={idx}
-                href={`/complaints/${v.complaint_type.slug}`}
-                passHref
-              >
-                <Tag as={Link}>{v.complaint_type.name}</Tag>
-              </NextLink>
+              <WrapItem key={idx}>
+                <NextLink
+                  href={`/complaints/${v.complaint_type.slug}`}
+                  passHref
+                >
+                  <Tag as={Link}>{v.complaint_type.name}</Tag>
+                </NextLink>
+              </WrapItem>
             ))}
-        </HStack>
+        </Wrap>
       ),
     },
   ]);
@@ -121,7 +123,7 @@ const DataTable = ({ columns, data }) => {
       initialState: {
         sortBy: [
           {
-            id: "open_date",
+            id: "allegation.open_date",
             desc: false,
           },
         ],
@@ -184,7 +186,8 @@ export async function getStaticProps({ params }) {
       dispositions: allegation_to_disposition(*, allegation: allegations(*, officer: officers(*), complaints: allegation_to_complaint(*, complaint_type: complaint_types(*))))
       `
     )
-    .eq("slug", params.slug);
+    .eq("slug", params.slug)
+    .single();
 
   if (error) {
     return {
@@ -194,7 +197,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      disposition: data[0],
+      disposition: data,
     },
   };
 }
