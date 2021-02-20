@@ -23,10 +23,6 @@ import NextLink from "next/link";
 const Complaints = ({ complaints }) => {
   const columns = useMemo(() => [
     {
-      Header: "ID",
-      accessor: "id",
-    },
-    {
       Header: "Name",
       accessor: (originalRow) => ({
         name: originalRow.name,
@@ -38,10 +34,18 @@ const Complaints = ({ complaints }) => {
         </NextLink>
       ),
     },
+    {
+      Header: "Frequency",
+      accessor: "allegations",
+      Cell: ({ value }) => value.length,
+    },
   ]);
 
   const data = useMemo(
-    () => complaints.sort((a, b) => a.id - b.id),
+    () =>
+      complaints.sort(
+        (a, b) => (a.allegations.length - b.allegations.length) * -1
+      ),
     complaints
   );
 
@@ -140,8 +144,10 @@ const DataTable = ({ columns, data }) => {
   );
 };
 
-export async function getStaticProps(context) {
-  const { data, error } = await supabase.from("complaint_types").select("*");
+export async function getStaticProps() {
+  const { data, error } = await supabase
+    .from("complaint_types")
+    .select(`*, allegations: allegation_to_complaint(id)`);
 
   if (error) {
     return {
