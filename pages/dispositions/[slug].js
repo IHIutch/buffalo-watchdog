@@ -55,7 +55,9 @@ const DispositionType = ({ disposition }) => {
                   href={`/complaints/${v.complaint_type.slug}`}
                   passHref
                 >
-                  <Tag as={Link}>{v.complaint_type.name}</Tag>
+                  <Tag whiteSpace="nowrap" as={Link}>
+                    {v.complaint_type.name}
+                  </Tag>
                 </NextLink>
               </WrapItem>
             ))}
@@ -108,7 +110,11 @@ const DispositionType = ({ disposition }) => {
                 </Box>
               </GridItem>
             </Grid>
-            <DataTable columns={columns} data={data} />
+            <Box overflowX="auto" mx="-4">
+              <Box px="4">
+                <DataTable columns={columns} data={data} />
+              </Box>
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -145,6 +151,7 @@ const DataTable = ({ columns, data }) => {
           <Tr key={rIdx} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, cIdx) => (
               <Th
+                whiteSpace="nowrap"
                 key={cIdx}
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >

@@ -31,7 +31,9 @@ const Dispositions = ({ dispositions }) => {
       }),
       Cell: ({ value }) => (
         <NextLink href={`/dispositions/${value.slug}`} passHref>
-          <Tag as={Link}>{value.name}</Tag>
+          <Tag whiteSpace="nowrap" as={Link}>
+            {value.name}
+          </Tag>
         </NextLink>
       ),
     },
@@ -92,7 +94,11 @@ const Dispositions = ({ dispositions }) => {
                 </Box>
               </GridItem>
             </Grid>
-            <DataTable columns={columns} data={data} />
+            <Box overflowX="auto" mx="-4">
+              <Box px="4">
+                <DataTable columns={columns} data={data} />
+              </Box>
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -121,6 +127,7 @@ const DataTable = ({ columns, data }) => {
           <Tr key={rIdx} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, cIdx) => (
               <Th
+                whiteSpace="nowrap"
                 key={cIdx}
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >

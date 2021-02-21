@@ -31,7 +31,9 @@ const Home = ({ allegations }) => {
       }),
       Cell: ({ value }) => (
         <NextLink href={`/officers/${value.slug}`} passHref>
-          <Tag as={Link}>{value.name}</Tag>
+          <Tag whiteSpace="nowrap" as={Link}>
+            {value.name}
+          </Tag>
         </NextLink>
       ),
     },
@@ -105,7 +107,11 @@ const Home = ({ allegations }) => {
                 </Box>
               </GridItem>
             </Grid>
-            <DataTable columns={columns} data={data} />
+            <Box overflowX="auto" mx="-4">
+              <Box px="4">
+                <DataTable columns={columns} data={data} />
+              </Box>
+            </Box>
           </Box>
         </Container>
       </Box>
@@ -113,7 +119,8 @@ const Home = ({ allegations }) => {
   );
 };
 
-const DataTable = ({ columns, data }) => {
+const DataTable = ({ columns, data, sx }) => {
+  console.log(sx);
   const {
     getTableProps,
     getTableBodyProps,
@@ -136,12 +143,13 @@ const DataTable = ({ columns, data }) => {
     useSortBy
   );
   return (
-    <Table {...getTableProps()} size="sm">
+    <Table {...getTableProps()} size="sm" w="100%" sx={sx}>
       <Thead>
         {headerGroups.map((headerGroup, rIdx) => (
           <Tr key={rIdx} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column, cIdx) => (
               <Th
+                whiteSpace="nowrap"
                 key={cIdx}
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >
