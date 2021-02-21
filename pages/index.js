@@ -72,10 +72,10 @@ const Home = ({ allegations }) => {
       <Box>
         <Navbar />
         <Container>
-          <Box>
+          <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan="8">
-                <Box pt="32" pb="24">
+                <Box mb="24">
                   <Text
                     fontWeight="semibold"
                     fontSize="2xl"
