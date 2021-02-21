@@ -61,7 +61,7 @@ const Dispositions = ({ dispositions }) => {
         <Container>
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
-              <GridItem colSpan="8">
+              <GridItem colSpan={{ base: "12", md: "8" }}>
                 <Box mb="24">
                   <Text
                     fontWeight="semibold"
@@ -76,7 +76,7 @@ const Dispositions = ({ dispositions }) => {
                   </Text>
                   <Heading
                     as="h1"
-                    fontSize="8xl"
+                    fontSize={{ base: "6xl", md: "8xl" }}
                     fontWeight="800"
                     letterSpacing="-0.1rem"
                     mb="4"

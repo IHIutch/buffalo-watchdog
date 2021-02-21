@@ -64,10 +64,10 @@ const Navbar = ({ sx }) => {
                   mx="-4"
                   h="16"
                   _hover=""
+                  fontSize="lg"
+                  fontWeight="bold"
                 >
-                  <Heading as="h1" size="md">
-                    Buffalo Watchdog
-                  </Heading>
+                  Buffalo Watchdog
                 </Link>
               </NextLink>
             </Box>
@@ -101,7 +101,7 @@ const Navbar = ({ sx }) => {
                     }
                     _hover={{ color: { md: "black" } }}
                     rounded={{ base: "md", md: "none" }}
-                    fontWeight="semibold"
+                    fontWeight="medium"
                     alignItems="center"
                     px="4"
                   >
