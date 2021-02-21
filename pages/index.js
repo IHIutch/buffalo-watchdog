@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 import NextLink from "next/link";
+import Navbar from "@/components/common/navbar";
 
 const Home = ({ allegations }) => {
   const columns = useMemo(() => [
@@ -63,48 +64,52 @@ const Home = ({ allegations }) => {
   const data = useMemo(() => formattedData, formattedData);
 
   return (
-    <div>
+    <>
       <Head>
         <title>Buffalo Watchdog</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container>
-        <Box>
-          <Grid templateColumns="repeat(12, 1fr)" gap="6">
-            <GridItem colSpan="8">
-              <Box pt="32" pb="24">
-                <Text
-                  fontWeight="semibold"
-                  fontSize="2xl"
-                  textTransform="uppercase"
-                  color="gray.400"
-                  letterSpacing="0.125rem"
-                  lineHeight="0.5"
-                  mb="4"
-                >
-                  Overview
-                </Text>
-                <Heading
-                  as="h1"
-                  fontSize="8xl"
-                  fontWeight="800"
-                  letterSpacing="-0.1rem"
-                  mb="4"
-                  lineHeight="1"
-                >
-                  Buffalo Watchdog
-                </Heading>
-                <Text color="gray.700" fontSize="2xl">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </Text>
-              </Box>
-            </GridItem>
-          </Grid>
-          <DataTable columns={columns} data={data} />
-        </Box>
-      </Container>
-    </div>
+      <Box>
+        <Navbar />
+        <Container>
+          <Box>
+            <Grid templateColumns="repeat(12, 1fr)" gap="6">
+              <GridItem colSpan="8">
+                <Box pt="32" pb="24">
+                  <Text
+                    fontWeight="semibold"
+                    fontSize="2xl"
+                    textTransform="uppercase"
+                    color="gray.400"
+                    letterSpacing="0.125rem"
+                    lineHeight="0.5"
+                    mb="4"
+                  >
+                    Overview
+                  </Text>
+                  <Heading
+                    as="h1"
+                    fontSize="8xl"
+                    fontWeight="800"
+                    letterSpacing="-0.1rem"
+                    mb="4"
+                    lineHeight="1"
+                  >
+                    Buffalo Watchdog
+                  </Heading>
+                  <Text color="gray.700" fontSize="2xl">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </Text>
+                </Box>
+              </GridItem>
+            </Grid>
+            <DataTable columns={columns} data={data} />
+          </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 

@@ -22,6 +22,7 @@ import {
 } from "@chakra-ui/react";
 import { useMemo } from "react";
 import dayjs from "dayjs";
+import Navbar from "@/components/common/navbar";
 
 const DispositionType = ({ disposition }) => {
   const columns = useMemo(() => [
@@ -66,48 +67,52 @@ const DispositionType = ({ disposition }) => {
   const data = useMemo(() => dispositions, dispositions);
 
   return (
-    <div>
+    <>
       <Head>
         <title>{disposition.name}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container>
-        <Box>
-          <Grid templateColumns="repeat(12, 1fr)" gap="6">
-            <GridItem colSpan="8">
-              <Box pt="32" pb="24">
-                <Text
-                  fontWeight="semibold"
-                  fontSize="2xl"
-                  textTransform="uppercase"
-                  color="gray.400"
-                  letterSpacing="0.125rem"
-                  lineHeight="0.5"
-                  mb="4"
-                >
-                  Disposition
-                </Text>
-                <Heading
-                  as="h1"
-                  fontSize="8xl"
-                  fontWeight="800"
-                  letterSpacing="-0.1rem"
-                  mb="4"
-                  lineHeight="1"
-                >
-                  {disposition.name}
-                </Heading>
-                <Text color="gray.700" fontSize="2xl">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </Text>
-              </Box>
-            </GridItem>
-          </Grid>
-          <DataTable columns={columns} data={data} />
-        </Box>
-      </Container>
-    </div>
+      <Box>
+        <Navbar />
+        <Container>
+          <Box>
+            <Grid templateColumns="repeat(12, 1fr)" gap="6">
+              <GridItem colSpan="8">
+                <Box pt="32" pb="24">
+                  <Text
+                    fontWeight="semibold"
+                    fontSize="2xl"
+                    textTransform="uppercase"
+                    color="gray.400"
+                    letterSpacing="0.125rem"
+                    lineHeight="0.5"
+                    mb="4"
+                  >
+                    Disposition
+                  </Text>
+                  <Heading
+                    as="h1"
+                    fontSize="8xl"
+                    fontWeight="800"
+                    letterSpacing="-0.1rem"
+                    mb="4"
+                    lineHeight="1"
+                  >
+                    {disposition.name}
+                  </Heading>
+                  <Text color="gray.700" fontSize="2xl">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                    do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua.
+                  </Text>
+                </Box>
+              </GridItem>
+            </Grid>
+            <DataTable columns={columns} data={data} />
+          </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 
