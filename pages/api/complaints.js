@@ -14,7 +14,6 @@ export default async (req, res) => {
           .update({ ...rest })
           .eq("id", id);
         if (error) {
-          console.log(error);
           throw new Error(error);
         }
         res.status(200).json(data);

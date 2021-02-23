@@ -120,7 +120,6 @@ const Home = ({ allegations }) => {
 };
 
 const DataTable = ({ columns, data, sx }) => {
-  console.log(sx);
   const {
     getTableProps,
     getTableBodyProps,

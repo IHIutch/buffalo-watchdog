@@ -50,9 +50,8 @@ const ComplaintType = ({ complaint }) => {
         <Wrap>
           {value &&
             value.map((v, idx) => (
-              <WrapItem>
+              <WrapItem key={idx}>
                 <NextLink
-                  key={idx}
                   href={`/dispositions/${v.disposition_type.slug}`}
                   passHref
                 >
