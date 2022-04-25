@@ -1,6 +1,6 @@
-import Head from "next/head";
-import supabase from "../util/supabase";
-import { useTable, useSortBy } from "react-table";
+import Head from 'next/head'
+import supabase from '../util/supabase'
+import { useTable, useSortBy } from 'react-table'
 
 import {
   Box,
@@ -17,16 +17,16 @@ import {
   Th,
   Thead,
   Tr,
-} from "@chakra-ui/react";
-import { useMemo } from "react";
-import NextLink from "next/link";
-import Navbar from "@/components/common/navbar";
+} from '@chakra-ui/react'
+import { useMemo } from 'react'
+import NextLink from 'next/link'
+import Navbar from '@/components/common/navbar'
 
 const Home = ({ allegations }) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
+        Header: 'Name',
         accessor: (originalRow) => ({
           name: `${originalRow.first_name} ${originalRow.last_name}`,
           slug: originalRow.slug,
@@ -40,16 +40,16 @@ const Home = ({ allegations }) => {
         ),
       },
       {
-        Header: "Rank",
-        accessor: "rank",
+        Header: 'Rank',
+        accessor: 'rank',
       },
       {
-        Header: "Unit",
-        accessor: "unit",
+        Header: 'Unit',
+        accessor: 'unit',
       },
       {
-        Header: "Allegations",
-        accessor: "allegations_count",
+        Header: 'Allegations',
+        accessor: 'allegations_count',
         Cell: ({ value }) => (
           <Text as="span" fontWeight="bold">
             {value}
@@ -58,16 +58,16 @@ const Home = ({ allegations }) => {
       },
     ],
     []
-  );
+  )
 
   const formattedData = allegations.map((a) => {
     return {
       ...a,
       allegations_count: a.allegations.length,
-    };
-  });
+    }
+  })
 
-  const data = useMemo(() => formattedData, [formattedData]);
+  const data = useMemo(() => formattedData, [formattedData])
 
   return (
     <>
@@ -80,7 +80,7 @@ const Home = ({ allegations }) => {
         <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
-              <GridItem colSpan={{ base: "12", md: "8" }}>
+              <GridItem colSpan={{ base: '12', md: '8' }}>
                 <Box mb="24">
                   <Text
                     fontWeight="semibold"
@@ -95,7 +95,7 @@ const Home = ({ allegations }) => {
                   </Text>
                   <Heading
                     as="h1"
-                    fontSize={{ base: "6xl", md: "8xl" }}
+                    fontSize={{ base: '6xl', md: '8xl' }}
                     fontWeight="800"
                     letterSpacing="-0.1rem"
                     mb="4"
@@ -120,8 +120,8 @@ const Home = ({ allegations }) => {
         </Container>
       </Box>
     </>
-  );
-};
+  )
+}
 
 const DataTable = ({ columns, data, sx }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -132,14 +132,14 @@ const DataTable = ({ columns, data, sx }) => {
         initialState: {
           sortBy: [
             {
-              id: "allegations_count",
+              id: 'allegations_count',
               desc: true,
             },
           ],
         },
       },
       useSortBy
-    );
+    )
   return (
     <Table {...getTableProps()} size="sm" w="100%" sx={sx}>
       <Thead>
@@ -151,9 +151,9 @@ const DataTable = ({ columns, data, sx }) => {
                 key={cIdx}
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >
-                {column.render("Header")}
+                {column.render('Header')}
                 <span>
-                  {column.isSorted ? (column.isSortedDesc ? "🔽" : "🔼") : ""}
+                  {column.isSorted ? (column.isSortedDesc ? '🔽' : '🔼') : ''}
                 </span>
               </Th>
             ))}
@@ -162,38 +162,38 @@ const DataTable = ({ columns, data, sx }) => {
       </Thead>
       <Tbody {...getTableBodyProps()}>
         {rows.map((row, rIdx) => {
-          prepareRow(row);
+          prepareRow(row)
           return (
             <Tr key={rIdx} {...row.getRowProps()}>
               {row.cells.map((cell, cIdx) => (
                 <Td key={cIdx} {...cell.getCellProps()}>
-                  {cell.render("Cell")}
+                  {cell.render('Cell')}
                 </Td>
               ))}
             </Tr>
-          );
+          )
         })}
       </Tbody>
     </Table>
-  );
-};
+  )
+}
 
 export async function getStaticProps() {
   const { data, error } = await supabase
-    .from("officers")
-    .select("*, allegations(*)");
+    .from('officers')
+    .select('*, allegations(*)')
 
   if (error) {
     return {
       notFound: true,
-    };
+    }
   }
 
   return {
     props: {
       allegations: data,
     },
-  };
+  }
 }
 
-export default Home;
+export default Home

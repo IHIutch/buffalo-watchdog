@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
-import PlausibleProvider from 'next-plausible'
+import * as Fathom from 'fathom-client'
+import { useRouter } from 'next/router'
 
 export default function App({ Component, pageProps }) {
   const router = useRouter()

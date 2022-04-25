@@ -1,43 +1,45 @@
-import supabase from "../../util/supabase";
+import supabase from '../../util/supabase'
 
-export default async (req, res) => {
-  const { method } = req;
-  const { disposition } = req.body;
+const handler = async (req, res) => {
+  const { method } = req
+  const { disposition } = req.body
 
   switch (method) {
     // Update
-    case "PUT":
+    case 'PUT':
       try {
-        const { id, ...rest } = disposition;
+        const { id, ...rest } = disposition
         const { data, error } = await supabase
-          .from("disposition_types")
+          .from('disposition_types')
           .update({ ...rest })
-          .eq("id", id);
+          .eq('id', id)
         if (error) {
-          throw new Error(error);
+          throw new Error(error)
         }
-        res.status(200).json(data);
+        res.status(200).json(data)
       } catch (error) {
-        res.status(400).json(error);
+        res.status(400).json(error)
       }
-      break;
+      break
 
     // Create
-    case "POST":
+    case 'POST':
       try {
         const { data, error } = await supabase
-          .from("disposition_types")
-          .insert(disposition);
+          .from('disposition_types')
+          .insert(disposition)
         if (error) {
-          throw new Error(error);
+          throw new Error(error)
         }
-        res.status(200).json(data);
+        res.status(200).json(data)
       } catch (error) {
-        res.status(400).json(error);
+        res.status(400).json(error)
       }
-      break;
+      break
     default:
-      res.setHeader("Allow", ["PUT", "POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      res.setHeader('Allow', ['PUT', 'POST'])
+      res.status(405).end(`Method ${method} Not Allowed`)
   }
-};
+}
+
+export default handler

@@ -1,7 +1,7 @@
-import Head from "next/head";
-import supabase from "@/util/supabase";
-import { useTable, useSortBy } from "react-table";
-import NextLink from "next/link";
+import Head from 'next/head'
+import supabase from '@/util/supabase'
+import { useTable, useSortBy } from 'react-table'
+import NextLink from 'next/link'
 import {
   Box,
   Container,
@@ -19,26 +19,26 @@ import {
   Tr,
   Wrap,
   WrapItem,
-} from "@chakra-ui/react";
-import { useMemo } from "react";
-import dayjs from "dayjs";
-import Navbar from "@/components/common/navbar";
+} from '@chakra-ui/react'
+import { useMemo } from 'react'
+import dayjs from 'dayjs'
+import Navbar from '@/components/common/navbar'
 
 const Officer = ({ officer }) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Open Date",
-        accessor: "open_date",
+        Header: 'Open Date',
+        accessor: 'open_date',
         Cell: ({ value }) => (
           <Box as="span" whiteSpace="nowrap">
-            {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
+            {value ? dayjs(value).format('MMM. DD, YYYY') : 'Unknown'}
           </Box>
         ),
       },
       {
-        Header: "Complaints",
-        accessor: "complaints",
+        Header: 'Complaints',
+        accessor: 'complaints',
         Cell: ({ value }) => (
           <Wrap>
             {value &&
@@ -58,17 +58,17 @@ const Officer = ({ officer }) => {
         ),
       },
       {
-        Header: "Disposition Date",
-        accessor: "disposition_date",
+        Header: 'Disposition Date',
+        accessor: 'disposition_date',
         Cell: ({ value }) => (
           <Box as="span" whiteSpace="nowrap">
-            {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
+            {value ? dayjs(value).format('MMM. DD, YYYY') : 'Unknown'}
           </Box>
         ),
       },
       {
-        Header: "Dispositions",
-        accessor: "dispositions",
+        Header: 'Dispositions',
+        accessor: 'dispositions',
         Cell: ({ value }) => (
           <Wrap spacing="2">
             {value &&
@@ -89,8 +89,8 @@ const Officer = ({ officer }) => {
       },
     ],
     []
-  );
-  const data = useMemo(() => officer.allegations, [officer.allegations]);
+  )
+  const data = useMemo(() => officer.allegations, [officer.allegations])
 
   return (
     <>
@@ -103,7 +103,7 @@ const Officer = ({ officer }) => {
         <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
-              <GridItem colSpan={{ base: "12", md: "8" }}>
+              <GridItem colSpan={{ base: '12', md: '8' }}>
                 <Box mb="24">
                   <Text
                     fontWeight="semibold"
@@ -118,7 +118,7 @@ const Officer = ({ officer }) => {
                   </Text>
                   <Heading
                     as="h1"
-                    fontSize={{ base: "6xl", md: "8xl" }}
+                    fontSize={{ base: '6xl', md: '8xl' }}
                     fontWeight="800"
                     letterSpacing="-0.1rem"
                     mb="4"
@@ -143,8 +143,8 @@ const Officer = ({ officer }) => {
         </Container>
       </Box>
     </>
-  );
-};
+  )
+}
 
 const DataTable = ({ columns, data }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -155,14 +155,14 @@ const DataTable = ({ columns, data }) => {
         initialState: {
           sortBy: [
             {
-              id: "open_date",
+              id: 'open_date',
               desc: false,
             },
           ],
         },
       },
       useSortBy
-    );
+    )
   return (
     <Table {...getTableProps()} size="sm">
       <Thead>
@@ -174,9 +174,9 @@ const DataTable = ({ columns, data }) => {
                 key={cIdx}
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >
-                {column.render("Header")}
+                {column.render('Header')}
                 <span>
-                  {column.isSorted ? (column.isSortedDesc ? "🔽" : "🔼") : ""}
+                  {column.isSorted ? (column.isSortedDesc ? '🔽' : '🔼') : ''}
                 </span>
               </Th>
             ))}
@@ -185,55 +185,55 @@ const DataTable = ({ columns, data }) => {
       </Thead>
       <Tbody {...getTableBodyProps()}>
         {rows.map((row, rIdx) => {
-          prepareRow(row);
+          prepareRow(row)
           return (
             <Tr key={rIdx} {...row.getRowProps()}>
               {row.cells.map((cell, cIdx) => (
                 <Td key={cIdx} {...cell.getCellProps()}>
-                  {cell.render("Cell")}
+                  {cell.render('Cell')}
                 </Td>
               ))}
             </Tr>
-          );
+          )
         })}
       </Tbody>
     </Table>
-  );
-};
+  )
+}
 
 export async function getStaticPaths() {
-  const { data } = await supabase.from("officers").select("*");
+  const { data } = await supabase.from('officers').select('*')
 
   const paths = data.map((o) => ({
     params: { slug: o.slug },
-  }));
+  }))
 
-  return { paths, fallback: false };
+  return { paths, fallback: false }
 }
 
 export async function getStaticProps({ params }) {
   const { data, error } = await supabase
-    .from("officers")
+    .from('officers')
     .select(
       `*, 
       allegations(*, 
         complaints: allegation_to_complaint(*, complaint_type: complaint_types(*)),
         dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*)))`
     )
-    .eq("slug", params.slug)
-    .single();
+    .eq('slug', params.slug)
+    .single()
 
   if (error) {
     return {
       notFound: true,
-    };
+    }
   }
 
   return {
     props: {
       officer: data,
     },
-  };
+  }
 }
 
-export default Officer;
+export default Officer

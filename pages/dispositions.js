@@ -1,6 +1,6 @@
-import Head from "next/head";
-import supabase from "../util/supabase";
-import { useTable, useSortBy } from "react-table";
+import Head from 'next/head'
+import supabase from '../util/supabase'
+import { useTable, useSortBy } from 'react-table'
 
 import {
   Box,
@@ -17,16 +17,16 @@ import {
   Th,
   Thead,
   Tr,
-} from "@chakra-ui/react";
-import { useMemo } from "react";
-import NextLink from "next/link";
-import Navbar from "@/components/common/navbar";
+} from '@chakra-ui/react'
+import { useMemo } from 'react'
+import NextLink from 'next/link'
+import Navbar from '@/components/common/navbar'
 
 const Dispositions = ({ dispositions }) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
+        Header: 'Name',
         accessor: (originalRow) => ({
           name: originalRow.name,
           slug: originalRow.slug,
@@ -40,13 +40,13 @@ const Dispositions = ({ dispositions }) => {
         ),
       },
       {
-        Header: "Frequency",
-        accessor: "dispositions",
+        Header: 'Frequency',
+        accessor: 'dispositions',
         Cell: ({ value }) => value.length,
       },
     ],
     []
-  );
+  )
 
   const data = useMemo(
     () =>
@@ -54,7 +54,7 @@ const Dispositions = ({ dispositions }) => {
         (a, b) => (a.dispositions.length - b.dispositions.length) * -1
       ),
     [dispositions]
-  );
+  )
 
   return (
     <>
@@ -67,7 +67,7 @@ const Dispositions = ({ dispositions }) => {
         <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
-              <GridItem colSpan={{ base: "12", md: "8" }}>
+              <GridItem colSpan={{ base: '12', md: '8' }}>
                 <Box mb="24">
                   <Text
                     fontWeight="semibold"
@@ -82,7 +82,7 @@ const Dispositions = ({ dispositions }) => {
                   </Text>
                   <Heading
                     as="h1"
-                    fontSize={{ base: "6xl", md: "8xl" }}
+                    fontSize={{ base: '6xl', md: '8xl' }}
                     fontWeight="800"
                     letterSpacing="-0.1rem"
                     mb="4"
@@ -107,8 +107,8 @@ const Dispositions = ({ dispositions }) => {
         </Container>
       </Box>
     </>
-  );
-};
+  )
+}
 
 const DataTable = ({ columns, data }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
@@ -118,7 +118,7 @@ const DataTable = ({ columns, data }) => {
         data,
       },
       useSortBy
-    );
+    )
   return (
     <Table {...getTableProps()} size="sm">
       <Thead>
@@ -130,9 +130,9 @@ const DataTable = ({ columns, data }) => {
                 key={cIdx}
                 {...column.getHeaderProps(column.getSortByToggleProps())}
               >
-                {column.render("Header")}
+                {column.render('Header')}
                 <span>
-                  {column.isSorted ? (column.isSortedDesc ? "🔽" : "🔼") : ""}
+                  {column.isSorted ? (column.isSortedDesc ? '🔽' : '🔼') : ''}
                 </span>
               </Th>
             ))}
@@ -141,38 +141,38 @@ const DataTable = ({ columns, data }) => {
       </Thead>
       <Tbody {...getTableBodyProps()}>
         {rows.map((row, rIdx) => {
-          prepareRow(row);
+          prepareRow(row)
           return (
             <Tr key={rIdx} {...row.getRowProps()}>
               {row.cells.map((cell, cIdx) => (
                 <Td key={cIdx} {...cell.getCellProps()}>
-                  {cell.render("Cell")}
+                  {cell.render('Cell')}
                 </Td>
               ))}
             </Tr>
-          );
+          )
         })}
       </Tbody>
     </Table>
-  );
-};
+  )
+}
 
 export async function getStaticProps() {
   const { data, error } = await supabase
-    .from("disposition_types")
-    .select(`*, dispositions: allegation_to_disposition(id)`);
+    .from('disposition_types')
+    .select(`*, dispositions: allegation_to_disposition(id)`)
 
   if (error) {
     return {
       notFound: true,
-    };
+    }
   }
 
   return {
     props: {
       dispositions: data,
     },
-  };
+  }
 }
 
-export default Dispositions;
+export default Dispositions
