@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model officer {
+  id          Int          @id
+  first_name  String?
+  last_name   String?
+  rank        String?
+  unit        String?
+  dob         DateTime?
+  doa         DateTime?
+  employee_no String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt
+  allegation  allegation[]
+}
+
+model allegation {
+  id                    Int       @id
+  iad                   String?
+  open_date             DateTime?
+  complaint_type        String?
+  disposition_type      String?
+  disposition_date      DateTime?
+  letter_to_complainant Boolean?
+  officer_id            Int
+  action_no             String?
+  notes                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime? @updatedAt
+  officer               officer   @relation(fields: [officer_id], references: [id])
+}
