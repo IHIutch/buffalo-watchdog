@@ -1,10 +1,11 @@
 import Head from "next/head";
 import supabase from "@/util/supabase";
 import { useTable, useSortBy } from "react-table";
-import Container from "@/components/common/container";
+
 import NextLink from "next/link";
 import {
   Box,
+  Container,
   Grid,
   GridItem,
   Heading,
@@ -25,48 +26,53 @@ import dayjs from "dayjs";
 import Navbar from "@/components/common/navbar";
 
 const DispositionType = ({ disposition }) => {
-  const columns = useMemo(() => [
-    {
-      Header: "Open Date",
-      accessor: "allegation.open_date",
-      Cell: ({ value }) =>
-        dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
-    },
-    {
-      Header: "Officer",
-      accessor: "allegation.officer",
-      Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
-    },
-    {
-      Header: "Disposition Date",
-      accessor: "allegation.disposition_date",
-      Cell: ({ value }) =>
-        dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
-    },
-    {
-      Header: "Complaint",
-      accessor: "allegation.complaints",
-      Cell: ({ value }) => (
-        <Wrap>
-          {value &&
-            value.map((v, idx) => (
-              <WrapItem key={idx}>
-                <NextLink
-                  href={`/complaints/${v.complaint_type.slug}`}
-                  passHref
-                >
-                  <Tag whiteSpace="nowrap" as={Link}>
-                    {v.complaint_type.name}
-                  </Tag>
-                </NextLink>
-              </WrapItem>
-            ))}
-        </Wrap>
-      ),
-    },
-  ]);
-  const dispositions = disposition.dispositions;
-  const data = useMemo(() => dispositions, dispositions);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Open Date",
+        accessor: "allegation.open_date",
+        Cell: ({ value }) =>
+          dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
+      },
+      {
+        Header: "Officer",
+        accessor: "allegation.officer",
+        Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
+      },
+      {
+        Header: "Disposition Date",
+        accessor: "allegation.disposition_date",
+        Cell: ({ value }) =>
+          dayjs(value) ? dayjs(value).format("MMM. DD, YYYY") : "Unknown",
+      },
+      {
+        Header: "Complaint",
+        accessor: "allegation.complaints",
+        Cell: ({ value }) => (
+          <Wrap>
+            {value &&
+              value.map((v, idx) => (
+                <WrapItem key={idx}>
+                  <NextLink
+                    href={`/complaints/${v.complaint_type.slug}`}
+                    passHref
+                  >
+                    <Tag whiteSpace="nowrap" as={Link}>
+                      {v.complaint_type.name}
+                    </Tag>
+                  </NextLink>
+                </WrapItem>
+              ))}
+          </Wrap>
+        ),
+      },
+    ],
+    []
+  );
+  const data = useMemo(
+    () => disposition.dispositions,
+    [disposition.dispositions]
+  );
 
   return (
     <>
@@ -76,7 +82,7 @@ const DispositionType = ({ disposition }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container>
+        <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: "12", md: "8" }}>
@@ -123,27 +129,22 @@ const DispositionType = ({ disposition }) => {
 };
 
 const DataTable = ({ columns, data }) => {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-      initialState: {
-        sortBy: [
-          {
-            id: "allegation.open_date",
-            desc: false,
-          },
-        ],
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+        initialState: {
+          sortBy: [
+            {
+              id: "allegation.open_date",
+              desc: false,
+            },
+          ],
+        },
       },
-    },
-    useSortBy
-  );
+      useSortBy
+    );
   return (
     <Table {...getTableProps()} size="sm">
       <Thead>

@@ -1,10 +1,10 @@
 import Head from "next/head";
 import supabase from "../util/supabase";
 import { useTable, useSortBy } from "react-table";
-import Container from "../components/common/container";
 import NextLink from "next/link";
 import {
   Box,
+  Container,
   Grid,
   GridItem,
   Heading,
@@ -25,80 +25,83 @@ import dayjs from "dayjs";
 import Navbar from "@/components/common/navbar";
 
 const Allegations = ({ allegations }) => {
-  const columns = useMemo(() => [
-    {
-      Header: "Officer",
-      accessor: "officers",
-      Cell: ({ value }) => (
-        <Box
-          as="span"
-          whiteSpace="nowrap"
-        >{`${value.first_name} ${value.last_name}`}</Box>
-      ),
-    },
-    {
-      Header: "Open Date",
-      accessor: "open_date",
-      Cell: ({ value }) => (
-        <Box as="span" whiteSpace="nowrap">
-          {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
-        </Box>
-      ),
-    },
-    {
-      Header: "Complaints",
-      accessor: "complaints",
-      Cell: ({ value }) => (
-        <Wrap>
-          {value &&
-            value.map((v, idx) => (
-              <WrapItem key={idx}>
-                <NextLink
-                  href={`/complaints/${v.complaint_type.slug}`}
-                  passHref
-                >
-                  <Tag whiteSpace="nowrap" as={Link}>
-                    {v.complaint_type.name}
-                  </Tag>
-                </NextLink>
-              </WrapItem>
-            ))}
-        </Wrap>
-      ),
-    },
-    {
-      Header: "Disposition Date",
-      accessor: "disposition_date",
-      Cell: ({ value }) => (
-        <Box as="span" whiteSpace="nowrap">
-          {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
-        </Box>
-      ),
-    },
-    {
-      Header: "Dispositions",
-      accessor: "dispositions",
-      Cell: ({ value }) => (
-        <Wrap spacing="2">
-          {value &&
-            value.map((v, idx) => (
-              <WrapItem key={idx}>
-                <NextLink
-                  href={`/dispositions/${v.disposition_type.slug}`}
-                  passHref
-                >
-                  <Tag whiteSpace="nowrap" as={Link}>
-                    {v.disposition_type.name}
-                  </Tag>
-                </NextLink>
-              </WrapItem>
-            ))}
-        </Wrap>
-      ),
-    },
-  ]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Officer",
+        accessor: "officers",
+        Cell: ({ value }) => (
+          <Box
+            as="span"
+            whiteSpace="nowrap"
+          >{`${value.first_name} ${value.last_name}`}</Box>
+        ),
+      },
+      {
+        Header: "Open Date",
+        accessor: "open_date",
+        Cell: ({ value }) => (
+          <Box as="span" whiteSpace="nowrap">
+            {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
+          </Box>
+        ),
+      },
+      {
+        Header: "Complaints",
+        accessor: "complaints",
+        Cell: ({ value }) => (
+          <Wrap>
+            {value &&
+              value.map((v, idx) => (
+                <WrapItem key={idx}>
+                  <NextLink
+                    href={`/complaints/${v.complaint_type.slug}`}
+                    passHref
+                  >
+                    <Tag whiteSpace="nowrap" as={Link}>
+                      {v.complaint_type.name}
+                    </Tag>
+                  </NextLink>
+                </WrapItem>
+              ))}
+          </Wrap>
+        ),
+      },
+      {
+        Header: "Disposition Date",
+        accessor: "disposition_date",
+        Cell: ({ value }) => (
+          <Box as="span" whiteSpace="nowrap">
+            {value ? dayjs(value).format("MMM. DD, YYYY") : "Unknown"}
+          </Box>
+        ),
+      },
+      {
+        Header: "Dispositions",
+        accessor: "dispositions",
+        Cell: ({ value }) => (
+          <Wrap spacing="2">
+            {value &&
+              value.map((v, idx) => (
+                <WrapItem key={idx}>
+                  <NextLink
+                    href={`/dispositions/${v.disposition_type.slug}`}
+                    passHref
+                  >
+                    <Tag whiteSpace="nowrap" as={Link}>
+                      {v.disposition_type.name}
+                    </Tag>
+                  </NextLink>
+                </WrapItem>
+              ))}
+          </Wrap>
+        ),
+      },
+    ],
+    []
+  );
 
-  const data = useMemo(() => allegations, allegations);
+  const data = useMemo(() => allegations, [allegations]);
 
   return (
     <>
@@ -108,7 +111,7 @@ const Allegations = ({ allegations }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container>
+        <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: "12", md: "8" }}>
@@ -155,27 +158,22 @@ const Allegations = ({ allegations }) => {
 };
 
 const DataTable = ({ columns, data }) => {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-      initialState: {
-        sortBy: [
-          {
-            id: "open_date",
-            desc: false,
-          },
-        ],
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+        initialState: {
+          sortBy: [
+            {
+              id: "open_date",
+              desc: false,
+            },
+          ],
+        },
       },
-    },
-    useSortBy
-  );
+      useSortBy
+    );
   return (
     <Table {...getTableProps()} size="sm">
       <Thead>

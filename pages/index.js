@@ -1,9 +1,10 @@
 import Head from "next/head";
 import supabase from "../util/supabase";
 import { useTable, useSortBy } from "react-table";
-import Container from "../components/common/container";
+
 import {
   Box,
+  Container,
   Grid,
   GridItem,
   Heading,
@@ -22,39 +23,42 @@ import NextLink from "next/link";
 import Navbar from "@/components/common/navbar";
 
 const Home = ({ allegations }) => {
-  const columns = useMemo(() => [
-    {
-      Header: "Name",
-      accessor: (originalRow) => ({
-        name: `${originalRow.first_name} ${originalRow.last_name}`,
-        slug: originalRow.slug,
-      }),
-      Cell: ({ value }) => (
-        <NextLink href={`/officers/${value.slug}`} passHref>
-          <Tag whiteSpace="nowrap" as={Link}>
-            {value.name}
-          </Tag>
-        </NextLink>
-      ),
-    },
-    {
-      Header: "Rank",
-      accessor: "rank",
-    },
-    {
-      Header: "Unit",
-      accessor: "unit",
-    },
-    {
-      Header: "Allegations",
-      accessor: "allegations_count",
-      Cell: ({ value }) => (
-        <Text as="span" fontWeight="bold">
-          {value}
-        </Text>
-      ),
-    },
-  ]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: (originalRow) => ({
+          name: `${originalRow.first_name} ${originalRow.last_name}`,
+          slug: originalRow.slug,
+        }),
+        Cell: ({ value }) => (
+          <NextLink href={`/officers/${value.slug}`} passHref>
+            <Tag whiteSpace="nowrap" as={Link}>
+              {value.name}
+            </Tag>
+          </NextLink>
+        ),
+      },
+      {
+        Header: "Rank",
+        accessor: "rank",
+      },
+      {
+        Header: "Unit",
+        accessor: "unit",
+      },
+      {
+        Header: "Allegations",
+        accessor: "allegations_count",
+        Cell: ({ value }) => (
+          <Text as="span" fontWeight="bold">
+            {value}
+          </Text>
+        ),
+      },
+    ],
+    []
+  );
 
   const formattedData = allegations.map((a) => {
     return {
@@ -63,7 +67,7 @@ const Home = ({ allegations }) => {
     };
   });
 
-  const data = useMemo(() => formattedData, formattedData);
+  const data = useMemo(() => formattedData, [formattedData]);
 
   return (
     <>
@@ -73,7 +77,7 @@ const Home = ({ allegations }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container>
+        <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: "12", md: "8" }}>
@@ -120,27 +124,22 @@ const Home = ({ allegations }) => {
 };
 
 const DataTable = ({ columns, data, sx }) => {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-      initialState: {
-        sortBy: [
-          {
-            id: "allegations_count",
-            desc: true,
-          },
-        ],
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+        initialState: {
+          sortBy: [
+            {
+              id: "allegations_count",
+              desc: true,
+            },
+          ],
+        },
       },
-    },
-    useSortBy
-  );
+      useSortBy
+    );
   return (
     <Table {...getTableProps()} size="sm" w="100%" sx={sx}>
       <Thead>

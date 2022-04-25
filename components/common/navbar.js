@@ -8,7 +8,7 @@ import {
   Icon,
   background,
 } from "@chakra-ui/react";
-import Container from "@/components/common/container";
+
 import NextLink from "next/link";
 import { Menu, X } from "react-feather";
 import { useRouter } from "next/router";
@@ -53,7 +53,7 @@ const Navbar = ({ sx }) => {
         right="0"
         sx={sx}
       >
-        <Container>
+        <Container maxW="container.lg" mx="auto">
           <Flex wrap="wrap" align="center">
             <Box mr="12">
               <NextLink href="/" passHref>

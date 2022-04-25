@@ -1,9 +1,10 @@
 import Head from "next/head";
 import supabase from "../util/supabase";
 import { useTable, useSortBy } from "react-table";
-import Container from "../components/common/container";
+
 import {
   Box,
+  Container,
   Grid,
   GridItem,
   Heading,
@@ -22,34 +23,37 @@ import NextLink from "next/link";
 import Navbar from "@/components/common/navbar";
 
 const Complaints = ({ complaints }) => {
-  const columns = useMemo(() => [
-    {
-      Header: "Name",
-      accessor: (originalRow) => ({
-        name: originalRow.name,
-        slug: originalRow.slug,
-      }),
-      Cell: ({ value }) => (
-        <NextLink href={`/complaints/${value.slug}`} passHref>
-          <Tag whiteSpace="nowrap" as={Link}>
-            {value.name}
-          </Tag>
-        </NextLink>
-      ),
-    },
-    {
-      Header: "Frequency",
-      accessor: "allegations",
-      Cell: ({ value }) => value.length,
-    },
-  ]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: (originalRow) => ({
+          name: originalRow.name,
+          slug: originalRow.slug,
+        }),
+        Cell: ({ value }) => (
+          <NextLink href={`/complaints/${value.slug}`} passHref>
+            <Tag whiteSpace="nowrap" as={Link}>
+              {value.name}
+            </Tag>
+          </NextLink>
+        ),
+      },
+      {
+        Header: "Frequency",
+        accessor: "allegations",
+        Cell: ({ value }) => value.length,
+      },
+    ],
+    []
+  );
 
   const data = useMemo(
     () =>
       complaints.sort(
         (a, b) => (a.allegations.length - b.allegations.length) * -1
       ),
-    complaints
+    [complaints]
   );
 
   return (
@@ -60,7 +64,7 @@ const Complaints = ({ complaints }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container>
+        <Container maxW="container.lg" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: "12", md: "8" }}>
@@ -107,19 +111,14 @@ const Complaints = ({ complaints }) => {
 };
 
 const DataTable = ({ columns, data }) => {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-    },
-    useSortBy
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+      },
+      useSortBy
+    );
   return (
     <Table {...getTableProps()} size="sm">
       <Thead>
