@@ -1,7 +1,5 @@
 import Head from 'next/head'
-import supabase from '../util/supabase'
 import { useTable, useSortBy } from 'react-table'
-
 import {
   Box,
   Container,
@@ -21,6 +19,7 @@ import {
 import { useMemo } from 'react'
 import NextLink from 'next/link'
 import Navbar from '@/components/common/navbar'
+import prisma from '@/lib/prisma'
 
 const Complaints = ({ complaints }) => {
   const columns = useMemo(
@@ -28,13 +27,13 @@ const Complaints = ({ complaints }) => {
       {
         Header: 'Name',
         accessor: (originalRow) => ({
-          name: originalRow.name,
+          label: originalRow.label,
           slug: originalRow.slug,
         }),
         Cell: ({ value }) => (
           <NextLink href={`/complaints/${value.slug}`} passHref>
             <Tag whiteSpace="nowrap" as={Link}>
-              {value.name}
+              {value.label}
             </Tag>
           </NextLink>
         ),
@@ -158,11 +157,33 @@ const DataTable = ({ columns, data }) => {
 }
 
 export async function getStaticProps() {
-  const { data, error } = await supabase
-    .from('complaint_types')
-    .select(`*, allegations: allegation_to_complaint(id)`)
+  const data = await prisma.complaint_types.findMany({
+    include: {
+      allegation_to_complaint: true,
+    },
+  })
+  // const { data, error } = await supabase
+  //   .from('complaint_types')
+  //   .select(`*, allegations: allegation_to_complaint(id)`)
 
-  if (error) {
+  const complaints = data.map((c) => {
+    const allegations =
+      c?.allegation_to_complaint?.map((ac) => ({
+        label: ac?.complaint?.label || null,
+        slug: ac?.complaint?.slug || null,
+      })) || null
+
+    delete c.allegation_to_complaint
+
+    return {
+      ...c,
+      createdAt: c?.createdAt?.toISOString() || null,
+      updatedAt: c?.updatedAt?.toISOString() || null,
+      allegations,
+    }
+  })
+
+  if (!data) {
     return {
       notFound: true,
     }
@@ -170,7 +191,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      complaints: data,
+      complaints,
     },
   }
 }
