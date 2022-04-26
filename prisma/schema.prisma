@@ -19,23 +19,64 @@ model officers {
   dob         DateTime?
   doa         DateTime?
   employee_no String?
+  slug        String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime?     @updatedAt
   allegations allegations[]
 }
 
 model allegations {
-  id                    Int       @id @default(autoincrement())
-  iad                   String?
-  open_date             DateTime?
-  complaint_type        String?
-  disposition_type      String?
-  disposition_date      DateTime?
-  letter_to_complainant Boolean?
-  officer_id            Int
-  action_no             String?
-  notes                 String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime? @updatedAt
-  officer               officers? @relation(fields: [officer_id], references: [id])
+  id                        Int                         @id @default(autoincrement())
+  iad                       String?
+  open_date                 DateTime?
+  complaint_type            String?
+  disposition_type          String?
+  disposition_date          DateTime?
+  letter_to_complainant     Boolean?
+  officer_id                Int
+  action_no                 String?
+  notes                     String?
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime?                   @updatedAt
+  officers                  officers?                   @relation(fields: [officer_id], references: [id])
+  allegation_to_complaint   allegation_to_complaint[]
+  allegation_to_disposition allegation_to_disposition[]
+}
+
+model disposition_types {
+  id                        Int                         @id @default(autoincrement())
+  label                     String
+  slug                      String
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime?                   @updatedAt
+  allegation_to_disposition allegation_to_disposition[]
+}
+
+model complaint_types {
+  id                      Int                       @id @default(autoincrement())
+  label                   String
+  slug                    String
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime?                 @updatedAt
+  allegation_to_complaint allegation_to_complaint[]
+}
+
+model allegation_to_complaint {
+  id            Int              @id @default(autoincrement())
+  allegation_id Int
+  complaint_id  Int
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime?        @updatedAt
+  allegation    allegations?     @relation(fields: [allegation_id], references: [id])
+  complaint     complaint_types? @relation(fields: [complaint_id], references: [id])
+}
+
+model allegation_to_disposition {
+  id             Int                @id @default(autoincrement())
+  allegation_id  Int
+  disposition_id Int
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime?          @updatedAt
+  allegation     allegations        @relation(fields: [allegation_id], references: [id])
+  disposition    disposition_types? @relation(fields: [disposition_id], references: [id])
 }

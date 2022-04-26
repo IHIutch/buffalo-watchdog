@@ -19,8 +19,8 @@ import {
 import { useTable, useSortBy } from 'react-table'
 import NextLink from 'next/link'
 import Navbar from '@/components/common/navbar'
-import { PrismaClient } from '@prisma/client'
 import slugify from 'slugify'
+import prisma from '@/lib/prisma'
 
 const Home = ({ officers }) => {
   const columns = useMemo(
@@ -80,7 +80,7 @@ const Home = ({ officers }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container maxW="container.lg" mx="auto">
+        <Container maxW="container.xl" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: '12', md: '8' }}>
@@ -182,7 +182,6 @@ const DataTable = ({ columns, data, sx }) => {
 }
 
 export async function getStaticProps() {
-  const prisma = new PrismaClient()
   const data = await prisma.officers.findMany({
     include: {
       allegations: true,

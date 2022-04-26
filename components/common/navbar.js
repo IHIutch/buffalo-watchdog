@@ -54,7 +54,7 @@ const Navbar = ({ sx }) => {
         right="0"
         sx={sx}
       >
-        <Container maxW="container.lg" mx="auto">
+        <Container maxW="container.xl" mx="auto">
           <Flex wrap="wrap" align="center">
             <Box mr="12">
               <NextLink href="/" passHref>

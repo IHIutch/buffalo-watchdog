@@ -79,7 +79,7 @@ const ComplaintType = ({ complaint }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container maxW="container.lg" mx="auto">
+        <Container maxW="container.xl" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: '12', md: '8' }}>
@@ -194,7 +194,7 @@ export async function getStaticProps({ params }) {
   const { data, error } = await supabase
     .from('complaint_types')
     .select(
-      `*, 
+      `*,
       complaints: allegation_to_complaint(*, allegation: allegations(*, officer: officers(*), dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*))))
       `
     )

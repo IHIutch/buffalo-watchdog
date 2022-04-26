@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import supabase from '../util/supabase'
 import { useTable, useSortBy } from 'react-table'
 import NextLink from 'next/link'
 import {
@@ -23,6 +22,7 @@ import {
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import Navbar from '@/components/common/navbar'
+import prisma from '@/lib/prisma'
 
 const Allegations = ({ allegations }) => {
   const columns = useMemo(
@@ -54,12 +54,9 @@ const Allegations = ({ allegations }) => {
             {value &&
               value.map((v, idx) => (
                 <WrapItem key={idx}>
-                  <NextLink
-                    href={`/complaints/${v.complaint_type.slug}`}
-                    passHref
-                  >
+                  <NextLink href={`/complaints/${v.slug}`} passHref>
                     <Tag whiteSpace="nowrap" as={Link}>
-                      {v.complaint_type.name}
+                      {v.label}
                     </Tag>
                   </NextLink>
                 </WrapItem>
@@ -84,12 +81,9 @@ const Allegations = ({ allegations }) => {
             {value &&
               value.map((v, idx) => (
                 <WrapItem key={idx}>
-                  <NextLink
-                    href={`/dispositions/${v.disposition_type.slug}`}
-                    passHref
-                  >
+                  <NextLink href={`/dispositions/${v.slug}`} passHref>
                     <Tag whiteSpace="nowrap" as={Link}>
-                      {v.disposition_type.name}
+                      {v.label}
                     </Tag>
                   </NextLink>
                 </WrapItem>
@@ -111,7 +105,7 @@ const Allegations = ({ allegations }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container maxW="container.lg" mx="auto">
+        <Container maxW="container.xl" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: '12', md: '8' }}>
@@ -213,20 +207,64 @@ const DataTable = ({ columns, data }) => {
 }
 
 export async function getStaticProps() {
-  const { data, error } = await supabase.from('allegations').select(`*, 
-      officers(*),
-      complaints: allegation_to_complaint(*, complaint_type: complaint_types(*)),
-      dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*))`)
+  const data = await prisma.allegations.findMany({
+    include: {
+      officers: true,
+      allegation_to_complaint: {
+        include: {
+          complaint: true,
+        },
+      },
+      allegation_to_disposition: {
+        include: {
+          disposition: true,
+        },
+      },
+    },
+  })
 
-  if (error) {
+  if (!data) {
     return {
       notFound: true,
     }
   }
 
+  const allegations = data.map((a) => {
+    const complaints =
+      a?.allegation_to_complaint?.map((ac) => ({
+        label: ac?.complaint?.label || null,
+        slug: ac?.complaint?.slug || null,
+      })) || null
+
+    const dispositions =
+      a?.allegation_to_disposition?.map((ad) => ({
+        label: ad?.disposition?.label || null,
+        slug: ad?.disposition?.slug || null,
+      })) || null
+
+    delete a.allegation_to_complaint
+    delete a.allegation_to_disposition
+    return {
+      ...a,
+      open_date: a?.open_date?.toISOString() || null,
+      disposition_date: a?.disposition_date?.toISOString() || null,
+      createdAt: a?.createdAt?.toISOString() || null,
+      updatedAt: a?.updatedAt?.toISOString() || null,
+      officers: {
+        ...a?.officers,
+        dob: a?.officers?.dob?.toISOString() || null,
+        doa: a?.officers?.doa?.toISOString() || null,
+        createdAt: a?.officers?.createdAt?.toISOString() || null,
+        updatedAt: a?.officers?.updatedAt?.toISOString() || null,
+      },
+      complaints,
+      dispositions,
+    }
+  })
+
   return {
     props: {
-      allegations: data,
+      allegations,
     },
   }
 }

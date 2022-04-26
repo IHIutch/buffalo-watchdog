@@ -64,7 +64,7 @@ const Dispositions = ({ dispositions }) => {
       </Head>
       <Box>
         <Navbar />
-        <Container maxW="container.lg" mx="auto">
+        <Container maxW="container.xl" mx="auto">
           <Box pt="24" pb="12">
             <Grid templateColumns="repeat(12, 1fr)" gap="6">
               <GridItem colSpan={{ base: '12', md: '8' }}>
