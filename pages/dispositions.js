@@ -1,7 +1,5 @@
 import Head from 'next/head'
-import supabase from '../util/supabase'
 import { useTable, useSortBy } from 'react-table'
-
 import {
   Box,
   Container,
@@ -21,20 +19,21 @@ import {
 import { useMemo } from 'react'
 import NextLink from 'next/link'
 import Navbar from '@/components/common/navbar'
+import prisma from '@/lib/prisma'
 
-const Dispositions = ({ dispositions }) => {
+const Dispositions = ({ disposition_types }) => {
   const columns = useMemo(
     () => [
       {
         Header: 'Name',
         accessor: (originalRow) => ({
-          name: originalRow.name,
+          label: originalRow.label,
           slug: originalRow.slug,
         }),
         Cell: ({ value }) => (
           <NextLink href={`/dispositions/${value.slug}`} passHref>
             <Tag whiteSpace="nowrap" as={Link}>
-              {value.name}
+              {value.label}
             </Tag>
           </NextLink>
         ),
@@ -50,10 +49,10 @@ const Dispositions = ({ dispositions }) => {
 
   const data = useMemo(
     () =>
-      dispositions.sort(
+      disposition_types.sort(
         (a, b) => (a.dispositions.length - b.dispositions.length) * -1
       ),
-    [dispositions]
+    [disposition_types]
   )
 
   return (
@@ -158,19 +157,41 @@ const DataTable = ({ columns, data }) => {
 }
 
 export async function getStaticProps() {
-  const { data, error } = await supabase
-    .from('disposition_types')
-    .select(`*, dispositions: allegation_to_disposition(id)`)
+  const data = await prisma.disposition_types.findMany({
+    include: {
+      allegation_to_disposition: true,
+    },
+  })
+  // const { data, error } = await supabase
+  //   .from('disposition_types')
+  //   .select(`*, dispositions: allegation_to_disposition(id)`)
 
-  if (error) {
+  if (!data) {
     return {
       notFound: true,
     }
   }
 
+  const disposition_types = data.map((c) => {
+    const dispositions =
+      c?.allegation_to_disposition?.map((ac) => ({
+        label: ac?.complaint?.label || null,
+        slug: ac?.complaint?.slug || null,
+      })) || null
+
+    delete c.allegation_to_disposition
+
+    return {
+      ...c,
+      createdAt: c?.createdAt?.toISOString() || null,
+      updatedAt: c?.updatedAt?.toISOString() || null,
+      dispositions,
+    }
+  })
+
   return {
     props: {
-      dispositions: data,
+      disposition_types: disposition_types,
     },
   }
 }

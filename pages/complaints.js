@@ -21,7 +21,7 @@ import NextLink from 'next/link'
 import Navbar from '@/components/common/navbar'
 import prisma from '@/lib/prisma'
 
-const Complaints = ({ complaints }) => {
+const Complaints = ({ complaint_types }) => {
   const columns = useMemo(
     () => [
       {
@@ -49,10 +49,10 @@ const Complaints = ({ complaints }) => {
 
   const data = useMemo(
     () =>
-      complaints.sort(
+      complaint_types.sort(
         (a, b) => (a.allegations.length - b.allegations.length) * -1
       ),
-    [complaints]
+    [complaint_types]
   )
 
   return (
@@ -162,11 +162,14 @@ export async function getStaticProps() {
       allegation_to_complaint: true,
     },
   })
-  // const { data, error } = await supabase
-  //   .from('complaint_types')
-  //   .select(`*, allegations: allegation_to_complaint(id)`)
 
-  const complaints = data.map((c) => {
+  if (!data) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const complaint_types = data.map((c) => {
     const allegations =
       c?.allegation_to_complaint?.map((ac) => ({
         label: ac?.complaint?.label || null,
@@ -183,15 +186,9 @@ export async function getStaticProps() {
     }
   })
 
-  if (!data) {
-    return {
-      notFound: true,
-    }
-  }
-
   return {
     props: {
-      complaints,
+      complaint_types,
     },
   }
 }
