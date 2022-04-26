@@ -10,8 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model officer {
-  id          Int          @id
+model officers {
+  id          Int           @id @default(autoincrement())
   first_name  String?
   last_name   String?
   rank        String?
@@ -19,13 +19,13 @@ model officer {
   dob         DateTime?
   doa         DateTime?
   employee_no String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime?    @updatedAt
-  allegation  allegation[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime?     @updatedAt
+  allegations allegations[]
 }
 
-model allegation {
-  id                    Int       @id
+model allegations {
+  id                    Int       @id @default(autoincrement())
   iad                   String?
   open_date             DateTime?
   complaint_type        String?
@@ -37,5 +37,5 @@ model allegation {
   notes                 String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime? @updatedAt
-  officer               officer   @relation(fields: [officer_id], references: [id])
+  officer               officers? @relation(fields: [officer_id], references: [id])
 }

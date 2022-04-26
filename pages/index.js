@@ -1,7 +1,5 @@
+import { useMemo } from 'react'
 import Head from 'next/head'
-import supabase from '../util/supabase'
-import { useTable, useSortBy } from 'react-table'
-
 import {
   Box,
   Container,
@@ -18,18 +16,23 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react'
-import { useMemo } from 'react'
+import { useTable, useSortBy } from 'react-table'
 import NextLink from 'next/link'
 import Navbar from '@/components/common/navbar'
+import { PrismaClient } from '@prisma/client'
+import slugify from 'slugify'
 
-const Home = ({ allegations }) => {
+const Home = ({ officers }) => {
   const columns = useMemo(
     () => [
       {
         Header: 'Name',
         accessor: (originalRow) => ({
           name: `${originalRow.first_name} ${originalRow.last_name}`,
-          slug: originalRow.slug,
+          slug: slugify(`${originalRow.first_name} ${originalRow.last_name}`, {
+            lower: true,
+            strict: true,
+          }),
         }),
         Cell: ({ value }) => (
           <NextLink href={`/officers/${value.slug}`} passHref>
@@ -60,10 +63,10 @@ const Home = ({ allegations }) => {
     []
   )
 
-  const formattedData = allegations.map((a) => {
+  const formattedData = officers.map((o) => {
     return {
-      ...a,
-      allegations_count: a.allegations.length,
+      ...o,
+      allegations_count: o.allegations.length,
     }
   })
 
@@ -179,19 +182,41 @@ const DataTable = ({ columns, data, sx }) => {
 }
 
 export async function getStaticProps() {
-  const { data, error } = await supabase
-    .from('officers')
-    .select('*, allegations(*)')
+  const prisma = new PrismaClient()
+  const data = await prisma.officers.findMany({
+    include: {
+      allegations: true,
+    },
+  })
 
-  if (error) {
+  if (!data) {
     return {
       notFound: true,
     }
   }
 
+  const officers = data.map((o) => {
+    return {
+      ...o,
+      dob: o?.dob?.toISOString() || null,
+      doa: o?.doa?.toISOString() || null,
+      createdAt: o?.createdAt?.toISOString() || null,
+      updatedAt: o?.updatedAt?.toISOString() || null,
+      allegations: o?.allegations?.map((a) => {
+        return {
+          ...a,
+          open_date: a?.open_date?.toISOString() || null,
+          disposition_date: a?.disposition_date?.toISOString() || null,
+          createdAt: a?.createdAt?.toISOString() || null,
+          updatedAt: a?.updatedAt?.toISOString() || null,
+        }
+      }),
+    }
+  })
+
   return {
     props: {
-      allegations: data,
+      officers,
     },
   }
 }
