@@ -1,7 +1,5 @@
 import Head from 'next/head'
-import supabase from '@/util/supabase'
 import { useTable, useSortBy } from 'react-table'
-
 import NextLink from 'next/link'
 import {
   Box,
@@ -24,6 +22,7 @@ import {
 import { useMemo } from 'react'
 import dayjs from 'dayjs'
 import Navbar from '@/components/common/navbar'
+import prisma from '@/lib/prisma'
 
 const ComplaintType = ({ complaint }) => {
   const columns = useMemo(
@@ -36,7 +35,7 @@ const ComplaintType = ({ complaint }) => {
       },
       {
         Header: 'Officer',
-        accessor: 'allegation.officer',
+        accessor: 'allegation.officers',
         Cell: ({ value }) => `${value.first_name} ${value.last_name}`,
       },
       {
@@ -50,31 +49,27 @@ const ComplaintType = ({ complaint }) => {
         accessor: 'allegation.dispositions',
         Cell: ({ value }) => (
           <Wrap>
-            {value &&
-              value.map((v, idx) => (
-                <WrapItem key={idx}>
-                  <NextLink
-                    href={`/dispositions/${v.disposition_type.slug}`}
-                    passHref
-                  >
-                    <Tag whiteSpace="nowrap" as={Link}>
-                      {v.disposition_type.name}
-                    </Tag>
-                  </NextLink>
-                </WrapItem>
-              ))}
+            {value?.map((v, idx) => (
+              <WrapItem key={idx}>
+                <NextLink href={`/dispositions/${v.slug}`} passHref>
+                  <Tag whiteSpace="nowrap" as={Link}>
+                    {v.label}
+                  </Tag>
+                </NextLink>
+              </WrapItem>
+            )) || 'None'}
           </Wrap>
         ),
       },
     ],
     []
   )
-  const data = useMemo(() => complaint.complaints, [complaint.complaints])
+  const data = useMemo(() => complaint.allegations, [complaint.allegations])
 
   return (
     <>
       <Head>
-        <title>{complaint.name}</title>
+        <title>{complaint.label}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box>
@@ -103,7 +98,7 @@ const ComplaintType = ({ complaint }) => {
                     mb="4"
                     lineHeight="1"
                   >
-                    {complaint.name}
+                    {complaint.label}
                   </Heading>
                   <Text color="gray.700" fontSize="2xl">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -181,8 +176,7 @@ const DataTable = ({ columns, data }) => {
 }
 
 export async function getStaticPaths() {
-  const { data } = await supabase.from('complaint_types').select('*')
-
+  const data = await prisma.complaint_types.findMany()
   const paths = data.map((c) => ({
     params: { slug: c.slug },
   }))
@@ -191,25 +185,75 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const { data, error } = await supabase
-    .from('complaint_types')
-    .select(
-      `*,
-      complaints: allegation_to_complaint(*, allegation: allegations(*, officer: officers(*), dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*))))
-      `
-    )
-    .eq('slug', params.slug)
-    .single()
+  const data = await prisma.complaint_types.findFirst({
+    include: {
+      allegation_to_complaint: {
+        include: {
+          allegation: {
+            include: {
+              officers: true,
+              allegation_to_disposition: {
+                include: {
+                  disposition: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    where: { slug: params.slug },
+  })
 
-  if (error) {
+  if (!data) {
     return {
       notFound: true,
     }
   }
 
+  const complaint = {
+    slug: data.slug,
+    label: data.label,
+    createdAt: data.createdAt?.toISOString() || null,
+    updatedAt: data.updatedAt?.toISOString() || null,
+    allegations: data.allegation_to_complaint.map((ac) => {
+      const dispositions =
+        ac?.allegation?.allegation_to_disposition.map((ad) => ({
+          label: ad?.disposition?.label || null,
+          slug: ad?.disposition?.slug || null,
+        })) || null
+
+      delete ac?.allegation?.allegation_to_disposition
+
+      return {
+        ...ac,
+        createdAt: ac?.createdAt?.toISOString() || null,
+        updatedAt: ac?.updatedAt?.toISOString() || null,
+        allegation: {
+          ...ac?.allegation,
+          dispositions,
+          open_date: ac?.allegation?.open_date?.toISOString() || null,
+          disposition_date:
+            ac?.allegation?.disposition_date?.toISOString() || null,
+          createdAt: ac?.allegation?.createdAt?.toISOString() || null,
+          updatedAt: ac?.allegation?.updatedAt?.toISOString() || null,
+          officers: {
+            ...ac?.allegation?.officers,
+            dob: ac?.allegation?.officers.dob?.toISOString() || null,
+            doa: ac?.allegation?.officers.doa?.toISOString() || null,
+            createdAt:
+              ac?.allegation?.officers.createdAt?.toISOString() || null,
+            updatedAt:
+              ac?.allegation?.officers.updatedAt?.toISOString() || null,
+          },
+        },
+      }
+    }),
+  }
+
   return {
     props: {
-      complaint: data,
+      complaint,
     },
   }
 }

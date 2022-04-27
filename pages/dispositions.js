@@ -162,9 +162,6 @@ export async function getStaticProps() {
       allegation_to_disposition: true,
     },
   })
-  // const { data, error } = await supabase
-  //   .from('disposition_types')
-  //   .select(`*, dispositions: allegation_to_disposition(id)`)
 
   if (!data) {
     return {

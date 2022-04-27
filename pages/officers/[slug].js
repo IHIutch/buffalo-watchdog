@@ -224,24 +224,12 @@ export async function getStaticProps({ params }) {
       slug: params.slug,
     },
   })
-  // const { data, error } = await supabase
-  //   .from('officers')
-  //   .select(
-  //     `*,
-  //     allegations(*,
-  //       complaints: allegation_to_complaint(*, complaint_type: complaint_types(*)),
-  //       dispositions: allegation_to_disposition(*, disposition_type: disposition_types(*)))`
-  //   )
-  //   .eq('slug', params.slug)
-  //   .single()
 
   if (!data) {
     return {
       notFound: true,
     }
   }
-
-  console.log(data.allegations)
 
   const officer = {
     ...data,
