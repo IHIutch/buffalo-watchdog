@@ -1,24 +1,24 @@
-label,value
-Administrative,administrative
-Captain Conference,captain-conference
-Charges Dismissed,charges-dismissed
-Chief Conference,chief-conference
-Commissioner Conference,commissioner-conference
-Conference,conference
-Dpc Conference,dpc-conference
-Evoc Training,evoc-training
-Exonerated,exonerated
-Formal Hearing Request,formal-hearing-request
-Harassment Triage,harassment-triage
-Hearing,hearing
-Informal Hearing,informal-hearing
-Letter Of Reprimand,letter-of-reprimand
-Not Sustained,not-sustained
-Other,other
-Pending,pending
-Reprimand,reprimand
-Sustained,sustained
-Training,training
-Triage Award,triage-award
-Triage Hearing,triage-hearing
-Unfounded,unfounded
+id,label,slug
+1,Administrative,administrative
+2,Captain Conference,captain-conference
+3,Charges Dismissed,charges-dismissed
+4,Chief Conference,chief-conference
+5,Commissioner Conference,commissioner-conference
+6,Conference,conference
+7,Dpc Conference,dpc-conference
+8,Evoc Training,evoc-training
+9,Exonerated,exonerated
+10,Formal Hearing Request,formal-hearing-request
+11,Harassment Triage,harassment-triage
+12,Hearing,hearing
+13,Informal Hearing,informal-hearing
+14,Letter Of Reprimand,letter-of-reprimand
+15,Not Sustained,not-sustained
+16,Other,other
+17,Pending,pending
+18,Reprimand,reprimand
+19,Sustained,sustained
+20,Training,training
+21,Triage Award,triage-award
+22,Triage Hearing,triage-hearing
+23,Unfounded,unfounded

@@ -1,56 +1,57 @@
-label,value
-Animal,animal
-Awol,awol
-Chemical,chemical
-City Involved Accident,city-involved-accident
-Conduct,conduct
-Correspondences,correspondences
-Court Appearance,court-appearance
-Court Attire,court-attire
-Discourtesy,discourtesy
-Domestic Involving Dept Member,domestic-involving-dept-member
-Escaped Prisoner,escaped-prisoner
-Excessive Force,excessive-force
-Expired License,expired-license
-Fail To Appear,fail-to-appear
-Failed To Respond,failed-to-respond
-False Arrest,false-arrest
-Firearms Discharge,firearms-discharge
-Firearms Security,firearms-security
-Harassment,harassment
-Hostile Work Environment,hostile-work-environment
-Illegal Search,illegal-search
-Improper Arrest,improper-arrest
-Improper Search,improper-search
-Injury,injury
-Insubordination,insubordination
-Intoxicated,intoxicated
-Investigation,investigation
-Lost/stolen Property,lost/stolen-property
-Missing Property,missing-property
-Off-duty,off-duty
-Officer Involved Shooting,officer-involved-shooting
-On-duty Accident,on-duty-accident
-On-duty Auto Accident,on-duty-auto-accident
-On-duty Shooting,on-duty-shooting
-Order To Sign Statement,order-to-sign-statement
-Pdo,pdo
-Physical,physical
-Poor Service,poor-service
-Prisoner Transport,prisoner-transport
-Prisoners,prisoners
-Procedures,procedures
-Property Damage,property-damage
-Racial Profiling,racial-profiling
-Report Entry,report-entry
-Rudeness,rudeness
-Search,search
-Shots Fired,shots-fired
-Sick Confinement,sick-confinement
-Social Media Violation,social-media-violation
-Truthfulness,truthfulness
-Uniform Violation,uniform-violation
-Unprofessional,unprofessional
-Use Of Force,use-of-force
-Vehicle Pursuit,vehicle-pursuit
-Weapon Pointed,weapon-pointed
+id,label,slug
+1,Additional Employment,additional-employment
+2,Animal,animal
+3,Awol,awol
+4,Chemical,chemical
+5,City Involved Accident,city-involved-accident
+6,Conduct,conduct
+7,Correspondences,correspondences
+8,Court Appearance,court-appearance
+9,Court Attire,court-attire
+10,Discourtesy,discourtesy
+11,Domestic Involving Dept Member,domestic-involving-dept-member
+12,Escaped Prisoner,escaped-prisoner
+13,Excessive Force,excessive-force
+14,Expired License,expired-license
+15,Fail To Appear,fail-to-appear
+16,Failed To Respond,failed-to-respond
+17,False Arrest,false-arrest
+18,Firearms Discharge,firearms-discharge
+19,Firearms Security,firearms-security
+20,Harassment,harassment
+21,Hostile Work Environment,hostile-work-environment
+22,Illegal Search,illegal-search
+23,Improper Arrest,improper-arrest
+24,Improper Search,improper-search
+25,Injury,injury
+26,Insubordination,insubordination
+27,Intoxicated,intoxicated
+28,Investigation,investigation
+29,Lost Stolen Property,lost-stolen-property
+30,Missing Property,missing-property
+31,Off Duty,off-duty
+32,Officer Involved Shooting,officer-involved-shooting
+33,On Duty Accident,on-duty-accident
+34,On Duty Auto Accident,on-duty-auto-accident
+35,On Duty Shooting,on-duty-shooting
+36,Order To Sign Statement,order-to-sign-statement
+37,Pdo,pdo
+38,Physical,physical
+39,Poor Service,poor-service
+40,Prisoner Transport,prisoner-transport
+41,Prisoners,prisoners
+42,Procedures,procedures
+43,Property Damage,property-damage
+44,Racial Profiling,racial-profiling
+45,Report Entry,report-entry
+46,Rudeness,rudeness
+47,Search,search
+48,Shots Fired,shots-fired
+49,Sick Confinement,sick-confinement
+50,Social Media Violation,social-media-violation
+51,Truthfulness,truthfulness
+52,Uniform Violation,uniform-violation
+53,Unprofessional,unprofessional
+54,Use Of Force,use-of-force
+55,Vehicle Pursuit,vehicle-pursuit
+56,Weapon Pointed,weapon-pointed
