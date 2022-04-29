@@ -40,8 +40,8 @@ const Complaints = ({ complaint_types }) => {
       },
       {
         Header: 'Frequency',
-        accessor: 'allegations',
-        Cell: ({ value }) => value.length,
+        accessor: '_count.allegation_to_complaint',
+        Cell: ({ value }) => value,
       },
     ],
     []
@@ -50,7 +50,10 @@ const Complaints = ({ complaint_types }) => {
   const data = useMemo(
     () =>
       complaint_types.sort(
-        (a, b) => (a.allegations.length - b.allegations.length) * -1
+        (a, b) =>
+          (a._count.allegation_to_complaint -
+            b._count.allegation_to_complaint) *
+          -1
       ),
     [complaint_types]
   )
@@ -158,8 +161,15 @@ const DataTable = ({ columns, data }) => {
 
 export async function getStaticProps() {
   const data = await prisma.complaint_types.findMany({
-    include: {
-      allegation_to_complaint: true,
+    select: {
+      id: true,
+      label: true,
+      slug: true,
+      _count: {
+        select: {
+          allegation_to_complaint: true,
+        },
+      },
     },
   })
 
@@ -169,26 +179,9 @@ export async function getStaticProps() {
     }
   }
 
-  const complaint_types = data.map((c) => {
-    const allegations =
-      c?.allegation_to_complaint?.map((ac) => ({
-        label: ac?.complaint?.label || null,
-        slug: ac?.complaint?.slug || null,
-      })) || null
-
-    delete c.allegation_to_complaint
-
-    return {
-      ...c,
-      createdAt: c?.createdAt?.toISOString() || null,
-      updatedAt: c?.updatedAt?.toISOString() || null,
-      allegations,
-    }
-  })
-
   return {
     props: {
-      complaint_types,
+      complaint_types: data,
     },
   }
 }

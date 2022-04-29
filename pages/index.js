@@ -29,10 +29,7 @@ const Home = ({ officers }) => {
         Header: 'Name',
         accessor: (originalRow) => ({
           name: `${originalRow.first_name} ${originalRow.last_name}`,
-          slug: slugify(`${originalRow.first_name} ${originalRow.last_name}`, {
-            lower: true,
-            strict: true,
-          }),
+          slug: originalRow.slug,
         }),
         Cell: ({ value }) => (
           <NextLink href={`/officers/${value.slug}`} passHref>
@@ -183,8 +180,17 @@ const DataTable = ({ columns, data, sx }) => {
 
 export async function getStaticProps() {
   const data = await prisma.officers.findMany({
-    include: {
-      allegations: true,
+    select: {
+      first_name: true,
+      last_name: true,
+      rank: true,
+      unit: true,
+      slug: true,
+      allegations: {
+        select: {
+          id: true,
+        },
+      },
     },
   })
 
@@ -194,28 +200,9 @@ export async function getStaticProps() {
     }
   }
 
-  const officers = data.map((o) => {
-    return {
-      ...o,
-      dob: o?.dob?.toISOString() || null,
-      doa: o?.doa?.toISOString() || null,
-      createdAt: o?.createdAt?.toISOString() || null,
-      updatedAt: o?.updatedAt?.toISOString() || null,
-      allegations: o?.allegations?.map((a) => {
-        return {
-          ...a,
-          open_date: a?.open_date?.toISOString() || null,
-          disposition_date: a?.disposition_date?.toISOString() || null,
-          createdAt: a?.createdAt?.toISOString() || null,
-          updatedAt: a?.updatedAt?.toISOString() || null,
-        }
-      }),
-    }
-  })
-
   return {
     props: {
-      officers,
+      officers: data,
     },
   }
 }

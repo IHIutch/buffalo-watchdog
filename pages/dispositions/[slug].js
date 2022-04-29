@@ -186,15 +186,30 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const data = await prisma.disposition_types.findFirst({
-    include: {
+    select: {
+      label: true,
+      slug: true,
       allegation_to_disposition: {
-        include: {
+        select: {
           allegation: {
-            include: {
-              officers: true,
+            select: {
+              open_date: true,
+              disposition_date: true,
+              officers: {
+                select: {
+                  first_name: true,
+                  last_name: true,
+                  slug: true,
+                },
+              },
               allegation_to_complaint: {
-                include: {
-                  complaint: true,
+                select: {
+                  complaint: {
+                    select: {
+                      label: true,
+                      slug: true,
+                    },
+                  },
                 },
               },
             },
@@ -214,8 +229,6 @@ export async function getStaticProps({ params }) {
   const disposition = {
     slug: data.slug,
     label: data.label,
-    createdAt: data.createdAt?.toISOString() || null,
-    updatedAt: data.updatedAt?.toISOString() || null,
     allegations: data.allegation_to_disposition.map((ad) => {
       const complaints =
         ad?.allegation?.allegation_to_complaint.map((ac) => ({
@@ -227,25 +240,12 @@ export async function getStaticProps({ params }) {
 
       return {
         ...ad,
-        createdAt: ad?.createdAt?.toISOString() || null,
-        updatedAt: ad?.updatedAt?.toISOString() || null,
         allegation: {
           ...ad?.allegation,
           complaints,
           open_date: ad?.allegation?.open_date?.toISOString() || null,
           disposition_date:
             ad?.allegation?.disposition_date?.toISOString() || null,
-          createdAt: ad?.allegation?.createdAt?.toISOString() || null,
-          updatedAt: ad?.allegation?.updatedAt?.toISOString() || null,
-          officers: {
-            ...ad?.allegation?.officers,
-            dob: ad?.allegation?.officers.dob?.toISOString() || null,
-            doa: ad?.allegation?.officers.doa?.toISOString() || null,
-            createdAt:
-              ad?.allegation?.officers.createdAt?.toISOString() || null,
-            updatedAt:
-              ad?.allegation?.officers.updatedAt?.toISOString() || null,
-          },
         },
       }
     }),

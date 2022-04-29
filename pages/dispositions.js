@@ -40,8 +40,8 @@ const Dispositions = ({ disposition_types }) => {
       },
       {
         Header: 'Frequency',
-        accessor: 'dispositions',
-        Cell: ({ value }) => value.length,
+        accessor: '_count.allegation_to_disposition',
+        Cell: ({ value }) => value,
       },
     ],
     []
@@ -50,7 +50,10 @@ const Dispositions = ({ disposition_types }) => {
   const data = useMemo(
     () =>
       disposition_types.sort(
-        (a, b) => (a.dispositions.length - b.dispositions.length) * -1
+        (a, b) =>
+          (a._count.allegation_to_disposition -
+            b._count.allegation_to_disposition) *
+          -1
       ),
     [disposition_types]
   )
@@ -158,8 +161,14 @@ const DataTable = ({ columns, data }) => {
 
 export async function getStaticProps() {
   const data = await prisma.disposition_types.findMany({
-    include: {
-      allegation_to_disposition: true,
+    select: {
+      label: true,
+      slug: true,
+      _count: {
+        select: {
+          allegation_to_disposition: true,
+        },
+      },
     },
   })
 
@@ -169,26 +178,9 @@ export async function getStaticProps() {
     }
   }
 
-  const disposition_types = data.map((c) => {
-    const dispositions =
-      c?.allegation_to_disposition?.map((ac) => ({
-        label: ac?.complaint?.label || null,
-        slug: ac?.complaint?.slug || null,
-      })) || null
-
-    delete c.allegation_to_disposition
-
-    return {
-      ...c,
-      createdAt: c?.createdAt?.toISOString() || null,
-      updatedAt: c?.updatedAt?.toISOString() || null,
-      dispositions,
-    }
-  })
-
   return {
     props: {
-      disposition_types: disposition_types,
+      disposition_types: data,
     },
   }
 }

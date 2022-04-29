@@ -204,17 +204,32 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const data = await prisma.officers.findFirst({
-    include: {
+    select: {
+      first_name: true,
+      last_name: true,
+      slug: true,
       allegations: {
-        include: {
+        select: {
+          open_date: true,
+          disposition_date: true,
           allegation_to_complaint: {
-            include: {
-              complaint: true,
+            select: {
+              complaint: {
+                select: {
+                  label: true,
+                  slug: true,
+                },
+              },
             },
           },
           allegation_to_disposition: {
-            include: {
-              disposition: true,
+            select: {
+              disposition: {
+                select: {
+                  label: true,
+                  slug: true,
+                },
+              },
             },
           },
         },
@@ -233,10 +248,6 @@ export async function getStaticProps({ params }) {
 
   const officer = {
     ...data,
-    dob: data.dob?.toISOString() || null,
-    doa: data.doa?.toISOString() || null,
-    createdAt: data.createdAt?.toISOString() || null,
-    updatedAt: data.updatedAt?.toISOString() || null,
     allegations: data.allegations?.map((a) => {
       const complaints =
         a?.allegation_to_complaint?.map((ac) => ({
@@ -250,15 +261,10 @@ export async function getStaticProps({ params }) {
           slug: ad?.disposition?.slug || null,
         })) || null
 
-      delete a.allegation_to_complaint
-      delete a.allegation_to_disposition
-
       return {
         ...a,
         open_date: a?.open_date?.toISOString() || null,
         disposition_date: a?.disposition_date?.toISOString() || null,
-        createdAt: a?.createdAt?.toISOString() || null,
-        updatedAt: a?.updatedAt?.toISOString() || null,
         complaints,
         dispositions,
       }

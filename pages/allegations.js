@@ -208,16 +208,40 @@ const DataTable = ({ columns, data }) => {
 
 export async function getStaticProps() {
   const data = await prisma.allegations.findMany({
-    include: {
-      officers: true,
+    select: {
+      open_date: true,
+      disposition_date: true,
+      officers: {
+        select: {
+          first_name: true,
+          last_name: true,
+          rank: true,
+          unit: true,
+          slug: true,
+        },
+      },
       allegation_to_complaint: {
-        include: {
-          complaint: true,
+        select: {
+          id: true,
+          allegation_id: true,
+          complaint_id: true,
+          complaint: {
+            select: {
+              label: true,
+              slug: true,
+            },
+          },
         },
       },
       allegation_to_disposition: {
-        include: {
-          disposition: true,
+        select: {
+          id: true,
+          disposition: {
+            select: {
+              label: true,
+              slug: true,
+            },
+          },
         },
       },
     },
@@ -231,10 +255,13 @@ export async function getStaticProps() {
 
   const allegations = data.map((a) => {
     const complaints =
-      a?.allegation_to_complaint?.map((ac) => ({
-        label: ac?.complaint?.label || null,
-        slug: ac?.complaint?.slug || null,
-      })) || null
+      a?.allegation_to_complaint?.map((ac) => {
+        if (!ac?.complaint?.label) console.log({ a, ac })
+        return {
+          label: ac?.complaint?.label || null,
+          slug: ac?.complaint?.slug || null,
+        }
+      }) || null
 
     const dispositions =
       a?.allegation_to_disposition?.map((ad) => ({
@@ -248,15 +275,6 @@ export async function getStaticProps() {
       ...a,
       open_date: a?.open_date?.toISOString() || null,
       disposition_date: a?.disposition_date?.toISOString() || null,
-      createdAt: a?.createdAt?.toISOString() || null,
-      updatedAt: a?.updatedAt?.toISOString() || null,
-      officers: {
-        ...a?.officers,
-        dob: a?.officers?.dob?.toISOString() || null,
-        doa: a?.officers?.doa?.toISOString() || null,
-        createdAt: a?.officers?.createdAt?.toISOString() || null,
-        updatedAt: a?.officers?.updatedAt?.toISOString() || null,
-      },
       complaints,
       dispositions,
     }
